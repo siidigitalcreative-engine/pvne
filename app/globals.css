@@ -1244,3 +1244,52 @@ img,svg,video,canvas{max-width:100%;height:auto}
     margin-inline: auto !important;
   }
 }
+
+/* Final community metadata alignment: align timestamp with Resident and
+   Transportation on the same text line, not merely inside its own wrapper. */
+.community-post-meta {
+  display: flex !important;
+  align-items: baseline !important;
+  flex-wrap: wrap;
+  column-gap: 7px;
+  row-gap: 5px;
+  line-height: 1.2 !important;
+}
+
+.community-post-meta > strong,
+.community-post-meta .resident-tag,
+.community-post-meta .post-time-meta,
+.community-post-meta .post-time-meta span,
+.community-post-meta > span {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  vertical-align: baseline !important;
+  line-height: 1.2 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.community-post-meta .post-time-meta,
+.community-post-meta .post-time-meta span {
+  font-size: 9px !important;
+  font-weight: 400 !important;
+  white-space: nowrap;
+}
+
+.community-post-meta .post-time-meta svg,
+.community-post-meta .post-time-meta i {
+  width: 10px !important;
+  height: 10px !important;
+  flex: 0 0 10px !important;
+  align-self: center !important;
+  margin: 0 3px 0 0 !important;
+  vertical-align: middle !important;
+}
+
+.community-post-meta .resident-tag svg,
+.community-post-meta > span svg {
+  flex-shrink: 0;
+  align-self: center;
+}
