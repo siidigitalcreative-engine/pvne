@@ -932,3 +932,78 @@ img,svg,video,canvas{max-width:100%;height:auto}
     font-size: 12px !important;
   }
 }
+
+
+/* =========================================================
+   PVNE MOBILE WELCOME CARD VISIBILITY FIX
+   Complete stylesheet override: keep the welcome card visible
+   below the hero copy and search field on narrow screens.
+   ========================================================= */
+@media (max-width: 840px) {
+  .hero-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 20px !important;
+  }
+
+  .hero-copy {
+    order: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 18px !important;
+  }
+
+  .hero-grid > .stack-card,
+  .hero-side-card,
+  .hero-grid .hero-side-card,
+  .hero-copy .hero-side-card {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static !important;
+    inset: auto !important;
+    order: 2 !important;
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 0 20px !important;
+    padding: 14px !important;
+    transform: none !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    background: #fff !important;
+    color: #203128 !important;
+    border: 1px solid rgba(32, 49, 40, .1) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(13, 35, 23, .08) !important;
+  }
+
+  .hero-side-card * ,
+  .hero-grid > .stack-card * {
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: inherit;
+  }
+
+  .hero-side-card p,
+  .hero-grid > .stack-card p {
+    margin: 4px 0 0 !important;
+    line-height: 1.45 !important;
+  }
+
+  .hero-side-card strong,
+  .hero-grid > .stack-card strong {
+    display: block !important;
+    font-weight: 750 !important;
+  }
+
+  .hero-image-showcase {
+    order: 3 !important;
+  }
+}
