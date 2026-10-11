@@ -11,6 +11,10 @@ export type StoredUser = {
   role: UserRole;
   status: "active" | "disabled";
   createdAt: string;
+  blockNumber?: string;
+  lotNumber?: string;
+  ownerRelationship?: string;
+  ownerRelationshipOther?: string;
 };
 
 const USERS_PATH = "pvne-private/users.enc.json";
@@ -112,6 +116,10 @@ export function publicUser(user: StoredUser) {
     role: user.role,
     status: user.status,
     createdAt: user.createdAt,
+    blockNumber: user.blockNumber ?? "",
+    lotNumber: user.lotNumber ?? "",
+    ownerRelationship: user.ownerRelationship ?? "",
+    ownerRelationshipOther: user.ownerRelationshipOther ?? "",
   };
 }
 
