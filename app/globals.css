@@ -479,3 +479,56 @@ img,svg,video,canvas{max-width:100%;height:auto}
   .poll-option { align-items: flex-start; }
   .poll-option input { flex: 0 0 15px; }
 }
+
+
+/* PVNE follow-up: icon-only back navigation, fixed mobile navigation, announcement details/posters, full-width map */
+.header-brand-row{display:flex;align-items:center;gap:10px;min-width:0}
+.back-icon-button{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#fff;color:#34543c;padding:0}
+.back-icon-button:hover{background:#edf4ec;border-color:#c8d9c9}
+.mobile-dropdown{display:none}
+@media(max-width:820px){
+ .site-header{z-index:50}
+ .mobile-nav{position:fixed!important;left:0;right:0;bottom:0;z-index:60;padding-bottom:calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 22px rgba(29,58,39,.12)}
+ .mobile-dropdown{position:fixed;display:grid;top:68px;right:12px;width:min(260px,calc(100vw - 24px));z-index:55;background:#fff;border:1px solid var(--line);border-radius:15px;padding:8px;box-shadow:0 16px 45px rgba(20,45,27,.16)}
+ .mobile-dropdown a{display:flex;align-items:center;gap:10px;padding:12px;border-radius:10px;color:#385640;font-weight:650}
+ .mobile-dropdown a:hover{background:#edf4ec}
+ .header-brand-row{gap:7px}
+ .back-icon-button{width:32px;height:32px;flex-basis:32px}
+}
+@media(max-width:480px){.header-brand-row .brand{gap:7px}.header-brand-row .brand-mark{width:33px;height:33px;font-size:19px}.header-brand-row .brand strong{font-size:11px}}
+.announcements-list{display:grid;gap:12px}
+.announcement-card-clickable{width:100%;text-align:left;font:inherit;color:inherit;background:#fff;border:1px solid var(--line);border-radius:16px;display:flex;align-items:flex-start;gap:14px;padding:18px;cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .18s}
+.announcement-card-clickable:hover{border-color:#bfd4c0;box-shadow:0 8px 24px rgba(34,70,43,.08);transform:translateY(-1px)}
+.announcement-card-clickable:focus-visible,.back-icon-button:focus-visible,.announcement-modal button:focus-visible{outline:3px solid #9fc7a2;outline-offset:3px}
+.announcement-card-clickable .announcement-main{flex:1;min-width:0}
+.announcement-open-icon{color:#67846b;font-size:22px;line-height:1;flex:0 0 auto}
+.poster-attached-label{display:flex;align-items:center;gap:5px;margin-top:8px;color:#4f7d55;font-size:10px;font-weight:700}
+.announcement-modal-backdrop{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(18,34,23,.52);backdrop-filter:blur(4px)}
+.announcement-modal{width:min(680px,100%);max-height:min(88vh,900px);overflow:auto;background:#fff;border:1px solid #e1e9df;border-radius:20px;box-shadow:0 25px 90px rgba(12,31,17,.28)}
+.announcement-modal-head{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-bottom:1px solid #edf1ec}
+.announcement-modal-kicker{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:.09em;color:#5a7b60}
+.announcement-modal-close{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:#fff;color:#435b47}
+.announcement-modal-content{padding:22px}
+.announcement-modal-content h2{font-size:clamp(22px,4vw,30px);line-height:1.2;margin-bottom:12px;overflow-wrap:anywhere}
+.announcement-modal-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-bottom:18px}
+.announcement-full-body{white-space:pre-wrap;overflow-wrap:anywhere;color:#435248;line-height:1.8;margin-bottom:24px}
+.announcement-poster-preview{margin:0 0 20px;border:1px solid #e4eae2;border-radius:12px;overflow:hidden;background:#f7f9f6;padding:10px}
+.announcement-poster-preview img{display:block;width:100%;height:auto;max-height:65vh;object-fit:contain;object-position:center}
+.announcement-poster-preview small{display:block;margin:8px 2px 0;color:var(--muted);overflow-wrap:anywhere}
+.announcement-upload-area{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:15px;border:1px dashed #c9d8c8;border-radius:14px;background:#f8fbf7}
+.announcement-upload-copy{display:flex;align-items:center;gap:11px;min-width:0;flex:1}
+.announcement-upload-icon{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:grid;place-items:center;background:#e7f1e5;color:#4b7a52}
+.announcement-upload-copy strong{display:block;font-size:12px}
+.announcement-upload-copy p{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.5}
+.announcement-file-input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+.announcement-upload-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:10px 13px;border:1px solid #c9d8c8;border-radius:10px;background:#fff;color:#355d3c;font-weight:750;font-size:11px;white-space:nowrap}
+.announcement-upload-button:hover{background:#edf5eb}
+.announcement-upload-note{margin:10px 2px 0;color:#8a968b;font-size:10px;line-height:1.5}
+.map-page .map-workspace-stacked{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.map-page .map-canvas{width:100%;max-width:100%;aspect-ratio:auto;min-height:0;max-height:none;display:block;overflow:hidden}
+.map-page .map-svg-viewport{max-width:100%;overscroll-behavior:contain}
+.map-page .map-svg-viewport svg{max-width:100%;min-width:0!important;height:auto}
+.map-page .map-results-below{width:100%;max-width:none}
+.map-page .map-result-list{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.map-page .map-legend{position:static;max-width:100%;align-items:center}
+@media(max-width:620px){.announcement-modal-backdrop{padding:10px}.announcement-modal{max-height:90vh;border-radius:16px}.announcement-modal-content{padding:17px}.announcement-card-clickable{gap:10px;padding:14px}.announcement-upload-area{align-items:stretch}.announcement-upload-button{width:100%}.map-page .map-canvas{padding:10px!important}.map-page .map-svg-viewport svg{width:100%!important}.map-page .map-legend{gap:10px}}
