@@ -85,9 +85,11 @@ export default function BusinessesPage() {
                 className="business-list-art"
                 aria-label={`${business.name} image area`}
               >
-                <span className="business-illustration" aria-hidden="true">
-                  {business.emoji}
-                </span>
+                <div className="business-image-frame">
+                  <span className="business-illustration" aria-hidden="true">
+                    {business.emoji}
+                  </span>
+                </div>
               </div>
 
               <div className="business-list-body">
@@ -168,10 +170,9 @@ export default function BusinessesPage() {
           gap: 16px;
         }
 
-        /* Horizontal card: image on the left, all details on the right. */
         .business-list-card {
           display: grid;
-          grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
+          grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
           align-items: stretch;
           min-width: 0;
           overflow: hidden;
@@ -181,28 +182,36 @@ export default function BusinessesPage() {
           box-shadow: 0 5px 18px rgba(30, 55, 39, 0.035);
         }
 
+        /* The color panel fills the card, but the photo/illustration frame itself stays 3:4. */
         .business-list-art {
-          position: relative;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          min-width: 0;
+          min-height: 100%;
+          overflow: hidden;
+          padding: 0;
+          background: linear-gradient(135deg, #f3e9d9, #dce9da);
+        }
+
+        .business-image-frame {
           display: flex;
           align-items: center;
           justify-content: center;
-          min-width: 0;
-          min-height: 0;
           width: 100%;
           max-width: 100%;
-          align-self: start;
-          overflow: hidden;
           aspect-ratio: 3 / 4;
-          background: linear-gradient(135deg, #f3e9d9, #dce9da);
+          overflow: hidden;
+          flex: 0 0 auto;
         }
 
         .business-illustration {
           display: block;
-          font-size: clamp(64px, 9vw, 112px);
+          max-width: 100%;
+          font-size: clamp(54px, 8vw, 88px);
           line-height: 1;
           filter: drop-shadow(0 8px 10px rgba(32, 49, 40, 0.12));
         }
-
 
         .business-list-body {
           display: flex;
@@ -210,13 +219,13 @@ export default function BusinessesPage() {
           align-items: flex-start;
           justify-content: center;
           min-width: 0;
-          padding: 22px 24px;
+          padding: 18px 20px;
         }
 
         .business-name {
-          margin: 0 0 9px;
+          margin: 0 0 7px;
           color: #203128;
-          font-size: clamp(18px, 2vw, 24px);
+          font-size: clamp(17px, 1.8vw, 22px);
           font-weight: 700;
           line-height: 1.25;
           overflow-wrap: break-word;
@@ -226,12 +235,12 @@ export default function BusinessesPage() {
           display: inline-flex;
           align-items: center;
           max-width: 100%;
-          margin: 0 0 10px;
+          margin: 0 0 8px;
           border-radius: 999px;
-          padding: 7px 12px;
+          padding: 5px 10px;
           background: #edf4ec;
           color: #47694f;
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 650;
           line-height: 1.3;
           overflow-wrap: break-word;
@@ -241,8 +250,8 @@ export default function BusinessesPage() {
           display: inline-flex;
           align-items: center;
           gap: 5px;
-          margin-bottom: 8px;
-          font-size: 14px;
+          margin-bottom: 7px;
+          font-size: 13px;
           font-weight: 650;
           line-height: 1.35;
         }
@@ -256,10 +265,10 @@ export default function BusinessesPage() {
         }
 
         .business-description {
-          margin: 0 0 12px;
+          margin: 0 0 8px;
           color: #69786d;
-          font-size: 14px;
-          line-height: 1.55;
+          font-size: 13px;
+          line-height: 1.4;
           overflow-wrap: break-word;
         }
 
@@ -267,30 +276,31 @@ export default function BusinessesPage() {
           display: flex;
           flex-wrap: wrap;
           align-items: center;
-          gap: 8px 18px;
+          gap: 5px 14px;
           width: 100%;
           color: #879288;
-          font-size: 13px;
-          line-height: 1.5;
+          font-size: 12px;
+          line-height: 1.4;
         }
 
         .business-meta > span {
           display: inline-flex;
           align-items: center;
-          gap: 7px;
+          gap: 6px;
           min-width: 0;
         }
 
         .business-actions {
           display: flex;
           flex-wrap: wrap;
-          align-items: center;
-          gap: 9px;
+          align-items: stretch;
+          gap: 8px;
           width: 100%;
-          margin-top: 16px;
+          margin-top: 12px;
         }
 
         .business-actions > * {
+          flex: 1 1 120px;
           min-width: 0;
         }
 
@@ -299,10 +309,12 @@ export default function BusinessesPage() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
-          min-height: 44px;
-          padding: 10px 14px;
-          font-size: 13px;
+          gap: 7px;
+          min-height: 40px;
+          padding: 8px 10px;
+          font-size: 12px;
+          line-height: 1.25;
+          text-align: center;
           white-space: normal;
         }
 
@@ -311,82 +323,75 @@ export default function BusinessesPage() {
             grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
           }
 
-          .business-list-art {
-            min-height: 240px;
+          .business-list-body {
+            padding: 20px 22px;
           }
         }
 
         @media (max-width: 640px) {
           .business-list-card {
-            grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
             border-radius: 18px;
           }
 
           .business-list-art {
-            min-height: 0;
-            height: auto;
-            width: 100%;
-            max-width: 100%;
-            align-self: start;
-            aspect-ratio: 3 / 4;
-            border-radius: 0;
+            align-items: flex-start;
           }
 
           .business-illustration {
-            font-size: clamp(48px, 13vw, 76px);
+            font-size: clamp(42px, 11vw, 64px);
           }
 
-
           .business-list-body {
-            padding: 15px 12px;
+            padding: 13px 11px;
           }
 
           .business-name {
-            font-size: 17px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 6px;
           }
 
           .business-category-pill {
-            margin-bottom: 8px;
-            padding: 6px 8px;
-            font-size: 11px;
+            margin-bottom: 7px;
+            padding: 5px 7px;
+            font-size: 10px;
           }
 
           .business-status {
-            margin-bottom: 7px;
+            margin-bottom: 6px;
             font-size: 12px;
           }
 
           .business-description {
-            margin-bottom: 9px;
-            font-size: 12px;
-            line-height: 1.45;
+            margin-bottom: 7px;
+            font-size: 11px;
+            line-height: 1.35;
           }
 
           .business-meta {
             flex-direction: column;
             align-items: flex-start;
-            gap: 5px;
-            font-size: 11px;
+            gap: 4px;
+            font-size: 10px;
           }
 
           .business-actions {
             flex-direction: column;
-            align-items: stretch;
-            gap: 7px;
-            margin-top: 12px;
+            gap: 6px;
+            margin-top: 10px;
           }
 
           .business-actions > * {
+            flex: 1 1 auto;
             width: 100%;
           }
 
           .business-actions :global(.primary-button),
           .business-actions :global(.secondary-button) {
             width: 100%;
-            min-height: 40px;
-            padding: 8px 9px;
-            font-size: 11px;
+            min-height: 36px;
+            padding: 7px 8px;
+            font-size: 10px;
           }
         }
 
@@ -396,15 +401,15 @@ export default function BusinessesPage() {
           }
 
           .business-list-body {
-            padding: 12px 9px;
+            padding: 11px 8px;
           }
 
           .business-name {
-            font-size: 15px;
+            font-size: 14px;
           }
 
           .business-description {
-            font-size: 11px;
+            font-size: 10px;
           }
         }
       `}</style>
