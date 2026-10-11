@@ -1293,3 +1293,44 @@ img,svg,video,canvas{max-width:100%;height:auto}
   flex-shrink: 0;
   align-self: center;
 }
+
+
+/* Homepage community topic cards: center every element within each card */
+.categories-section .category-grid > .category-tile {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100%;
+  min-width: 0;
+}
+
+.categories-section .category-grid > .category-tile > .category-icon {
+  display: grid !important;
+  place-items: center !important;
+  align-self: center !important;
+  margin-inline: auto !important;
+  flex: 0 0 auto;
+}
+
+.categories-section .category-grid > .category-tile > strong {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: stretch !important;
+  width: 100%;
+  min-width: 0;
+  text-align: center !important;
+  margin-inline: auto !important;
+}
+
+.categories-section .category-grid > .category-tile > small {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: stretch !important;
+  width: 100%;
+  text-align: center !important;
+  margin-inline: auto !important;
+}
