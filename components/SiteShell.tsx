@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Building2, CalendarDays, House, Map, Menu, MessageCircle, Search, Store, Wrench } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { ArrowLeft, Bell, Building2, House, Map, Menu, MessageCircle, Search, Store, X } from "lucide-react";
 
 const nav = [
   { href: "/", label: "Home", icon: House },
@@ -13,25 +15,33 @@ const nav = [
 ];
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const showBack = pathname !== "/";
   return (
     <>
       <header className="site-header">
-        <Link href="/" className="brand">
-          <span className="brand-mark">🏡</span>
-          <span><strong>Pagsibol Village</strong><small>Northeastern Naic</small></span>
-        </Link>
+        <div className="header-brand-row">
+          {showBack && <button className="back-icon-button" type="button" aria-label="Go back" title="Go back" onClick={() => { if (window.history.length > 1) router.back(); else router.push("/"); }}><ArrowLeft size={19}/></button>}
+          <Link href="/" className="brand">
+            <span className="brand-mark">🏡</span>
+            <span><strong>Pagsibol Village</strong><small>Northeastern Naic</small></span>
+          </Link>
+        </div>
         <nav className="desktop-nav" aria-label="Main navigation">
-          {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href}><Icon size={16} />{label}</Link>)}
+          {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined}><Icon size={16} />{label}</Link>)}
         </nav>
         <div className="header-actions">
           <Link href="/directory" className="icon-button" aria-label="Search directory"><Search size={19} /></Link>
           <Link href="/announcements" className="icon-button" aria-label="Notifications"><Bell size={19} /><i /></Link>
           <Link href="/community" className="avatar" aria-label="PVNE community profile">PVNE</Link>
-          <button className="mobile-menu" aria-label="Menu" onClick={() => document.body.classList.toggle("menu-open")}><Menu size={22}/></button>
+          <button className="mobile-menu" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(v => !v)}>{menuOpen ? <X size={22}/> : <Menu size={22}/>}</button>
         </div>
       </header>
-      <nav className="mobile-nav" aria-label="Mobile navigation">
-        {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href}><Icon size={18}/><span>{label}</span></Link>)}
+      {menuOpen && <nav className="mobile-dropdown" aria-label="Expanded navigation">{nav.map(({href,label,icon:Icon})=><Link href={href} key={href} onClick={()=>setMenuOpen(false)}><Icon size={17}/>{label}</Link>)}</nav>}
+      <nav className="mobile-nav" aria-label="Main navigation">
+        {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined}><Icon size={18}/><span>{label}</span></Link>)}
       </nav>
       <main>{children}</main>
       <footer className="site-footer">
