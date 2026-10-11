@@ -14,6 +14,7 @@ export type StoredUser = {
   blockNumber?: string;
   lotNumber?: string;
   streetName?: string;
+  colorScheme?: string;
   ownerRelationship?: string;
   ownerRelationshipOther?: string;
 };
