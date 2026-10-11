@@ -35,9 +35,17 @@ const nav = [
   { href: "/map", label: "Village Map", icon: Map },
 ];
 
+function normalizePath(path: string) {
+  const withoutQuery = path.split("?")[0].split("#")[0];
+  if (withoutQuery.length > 1 && withoutQuery.endsWith("/")) return withoutQuery.slice(0, -1);
+  return withoutQuery || "/";
+}
+
 function isNavActive(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const current = normalizePath(pathname);
+  const target = normalizePath(href);
+  if (target === "/") return current === "/";
+  return current === target || current.startsWith(`${target}/`);
 }
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -264,19 +272,22 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         ))}
       </nav>
 
-      <style jsx>{`
-        .desktop-nav a.active, .mobile-nav a.active, .mobile-dropdown a.active {
+      <style jsx global>{`
+        .site-header .desktop-nav a.active,
+        .site-header .mobile-nav a.active,
+        .mobile-dropdown a.active {
           background: #e7f2e8 !important;
           color: #245c38 !important;
-          font-weight: 700;
+          font-weight: 700 !important;
+          border-radius: 10px !important;
         }
-        .desktop-nav a:not(.active), .mobile-nav a:not(.active), .mobile-dropdown a:not(.active) {
+        .site-header .desktop-nav a:not(.active),
+        .site-header .mobile-nav a:not(.active),
+        .mobile-dropdown a:not(.active) {
           background: transparent !important;
-          color: inherit;
         }
-        .desktop-nav a.active, .mobile-nav a.active { border-radius: 10px; }
-        .account-menu-trigger:hover { color: #245c38; }
-        .account-menu-trigger:focus-visible { outline: 2px solid #9bb9a0; outline-offset: 3px; border-radius: 4px; }
+        .site-header .account-menu-trigger:hover { color: #245c38; }
+        .site-header .account-menu-trigger:focus-visible { outline: 2px solid #9bb9a0; outline-offset: 3px; border-radius: 4px; }
       `}</style>
       <main>{children}</main>
 
