@@ -17,6 +17,8 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const HOUSE_COLOR_SCHEMES = new Set(["Turquoise", "Aubergine", "Santan"]);
+
 const RELATIONSHIPS = new Set([
   "owner",
   "co_owner",
@@ -77,8 +79,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Enter your lot number." }, { status: 400 });
   }
 
-  if (!colorScheme) {
-    return NextResponse.json({ error: "Select your house color." }, { status: 400 });
+  if (!HOUSE_COLOR_SCHEMES.has(colorScheme)) {
+    return NextResponse.json({ error: "Select Turquoise, Aubergine, or Santan for your house color scheme." }, { status: 400 });
   }
 
   if (!RELATIONSHIPS.has(ownerRelationship)) {
