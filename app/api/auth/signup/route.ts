@@ -13,7 +13,6 @@ import {
   publicUser,
   type StoredUser,
 } from "@/lib/user-store";
-import { readVillageData, writeVillageData } from "@/lib/blob-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,10 +48,9 @@ export async function POST(request: Request) {
   const password = typeof body.password === "string" ? body.password : "";
   const blockNumber = cleanField(body.blockNumber, 20);
   const lotNumber = cleanField(body.lotNumber, 20);
+  const streetName = cleanField(body.streetName, 100);
   const ownerRelationship = cleanField(body.ownerRelationship, 40);
   const ownerRelationshipOther = cleanField(body.ownerRelationshipOther, 100);
-  const allowedColors = new Set(["Turquoise", "Aubergine", "Santan"]);
-  const colorScheme = cleanField(body.colorScheme, 20);
 
   if (name.length < 2) {
     return NextResponse.json({ error: "Enter your full name." }, { status: 400 });
@@ -76,10 +74,6 @@ export async function POST(request: Request) {
 
   if (!lotNumber) {
     return NextResponse.json({ error: "Enter your lot number." }, { status: 400 });
-  }
-
-  if (!allowedColors.has(colorScheme)) {
-    return NextResponse.json({ error: "Select a valid house color." }, { status: 400 });
   }
 
   if (!RELATIONSHIPS.has(ownerRelationship)) {
@@ -122,38 +116,13 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
       blockNumber,
       lotNumber,
+      streetName,
       ownerRelationship,
       ownerRelationshipOther: ownerRelationship === "other" ? ownerRelationshipOther : "",
-      colorScheme: colorScheme as "Turquoise" | "Aubergine" | "Santan",
     };
 
     users.push(user);
     await writeUsers(users);
-
-    // Keep the public household directory/map aligned with the registered account.
-    const villageData = await readVillageData();
-    const normalized = (value: string) => value.trim().replace(/^0+(?=\\d)/, "").toLowerCase();
-    const householdIndex = villageData.households.findIndex((item) =>
-      normalized(item.block) === normalized(blockNumber) &&
-      normalized(item.lot) === normalized(lotNumber)
-    );
-    if (householdIndex >= 0) {
-      villageData.households[householdIndex] = {
-        ...villageData.households[householdIndex],
-        colorScheme: colorScheme as "Turquoise" | "Aubergine" | "Santan",
-      };
-    } else {
-      villageData.households.push({
-        id: `house-${blockNumber.trim()}-${lotNumber.trim()}`.replace(/[^a-zA-Z0-9_-]/g, "-"),
-        block: blockNumber,
-        lot: lotNumber,
-        street: "",
-        colorScheme: colorScheme as "Turquoise" | "Aubergine" | "Santan",
-        hasBusiness: false,
-        businesses: [],
-      });
-    }
-    await writeVillageData(villageData);
 
     const response = NextResponse.json(
       { ok: true, user: publicUser(user) },
