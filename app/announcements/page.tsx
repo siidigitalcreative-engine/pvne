@@ -39,7 +39,7 @@ export default function AnnouncementsPage() {
       <div className="announcement-modal-content"><h2 id="announcement-modal-title">{selected.title}</h2><p className="announcement-modal-meta"><CalendarDays size={14}/>{selected.createdAt} <span>·</span> {selected.author} <span>·</span> {selected.location}</p><p className="announcement-full-body">{selected.body}</p>
         {posters[selected.id] && <div className="announcement-poster-preview"><img src={posters[selected.id].url} alt={`Poster for ${selected.title}`} /><small>{posters[selected.id].name}</small></div>}
         <div className="announcement-upload-area"><div className="announcement-upload-copy"><span className="announcement-upload-icon"><ImagePlus size={19}/></span><div><strong>Event poster</strong><p>Attach the original poster image. Its aspect ratio is preserved without cropping.</p></div></div><input ref={uploadRef} className="announcement-file-input" type="file" accept="image/*" onChange={e => handlePoster(e.target.files?.[0])}/><button className="announcement-upload-button" type="button" onClick={() => uploadRef.current?.click()}><Upload size={16}/>{posters[selected.id] ? "Replace poster" : "Upload poster"}</button></div>
-        <p className="announcement-upload-note">Poster preview is temporary in this browser session; permanent storage requires connecting this form to the site's upload service.</p>
+        <p className="announcement-upload-note">Poster preview is temporary in this browser session; permanent storage requires connecting this form to the site&apos;s upload service.</p>
       </div>
     </section>
   </div>}
