@@ -8,12 +8,12 @@ import { useRouter } from "next/navigation";
 type AuthFormProps = { mode: "login" | "signup" };
 
 const relationshipOptions = [
-  { value: "owner", label: "Homeowner (HO)" },
+  { value: "owner", label: "Homeowner" },
   { value: "co_owner", label: "Co-owner" },
   { value: "spouse", label: "Spouse of Homeowner" },
-  { value: "domestic_partner", label: "Domestic Partner of Homeowner" },
-  { value: "family_member", label: "Immediate Family Member of Homeowner" },
-  { value: "authorized_representative", label: "Authorized Household Representative" },
+  { value: "domestic_partner", label: "Partner of Homeowner" },
+  { value: "family_member", label: "Immediate Family Member" },
+  { value: "authorized_representative", label: "Authorized Representative" },
   { value: "tenant", label: "Tenant / Lessee" },
   { value: "other", label: "Other" },
 ];
