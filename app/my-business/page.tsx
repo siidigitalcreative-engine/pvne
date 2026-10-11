@@ -27,7 +27,7 @@ export default function MyBusinessPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  return <SiteShell><div className="page-container">
+  return <SiteShell><div className="page-container my-business-page">
     <div className="page-hero compact"><span className="section-kicker">LOCAL ENTERPRISE</span><h1>My Business</h1><p>View business listings associated with your registered Block and Lot.</p></div>
     {loading && <p className="no-business">Loading your business listings…</p>}
     {error && <div className="info-banner"><div><strong>Business listings unavailable</strong><p>{error} <Link href="/login">Log in</Link></p></div></div>}
@@ -35,5 +35,16 @@ export default function MyBusinessPage() {
       {profile?.blockNumber && profile?.lotNumber ? <p className="result-summary">Your address: Block {profile.blockNumber}, Lot {profile.lotNumber}</p> : <div className="info-banner"><div><strong>Add your house details first</strong><p>Save your Block and Lot under <Link href="/my-house">My House</Link> to find business listings associated with your address.</p></div></div>}
       {businesses.length ? <div className="house-grid">{businesses.map(b => <article className="house-card" key={b.id}><div className="house-card-content"><div style={{ fontSize: 30 }}>{b.emoji}</div><div className="house-title"><div><h2>{b.name}</h2><p>{b.category}</p></div><span className="has-business">{b.status}</span></div><div className="house-meta"><span><MapPinned size={14}/>{b.blockLot}</span></div><p>{b.description}</p><p style={{ color: "#68766c", fontSize: 13 }}>Hours: {b.hours}</p><Link href="/businesses" className="house-card-link">View business directory <ExternalLink size={15}/></Link></div></article>)}</div> : !error && <div className="info-banner"><Store size={20}/><div><strong>No business listings found for this address</strong><p>Business listings are currently read from the village directory. New business registration and editing are not available on this page yet.</p><Link href="/businesses">Browse all businesses</Link></div></div>}
     </>}
+    <style jsx>{`
+      .my-business-page .info-banner { border-radius: 13px; }
+      .my-business-page .house-card { border-radius: 18px; border-color: #e0e8df; box-shadow: 0 12px 34px rgba(32, 58, 37, .045); }
+      .my-business-page .house-card-content { padding: 20px; }
+      .my-business-page .house-card-content > p { font-size: 13px; line-height: 1.6; color: #68766c; }
+      .my-business-page .house-card-link { font-size: 12px; }
+      @media (max-width: 620px) {
+        .my-business-page .house-grid { grid-template-columns: minmax(0, 1fr); }
+        .my-business-page .house-card-content { padding: 16px; }
+      }
+    `}</style>
   </div></SiteShell>;
 }
