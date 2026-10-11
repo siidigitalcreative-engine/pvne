@@ -31,11 +31,11 @@ export default function VillageMapPage() {
     <div className="map-block-tabs" role="tablist" aria-label="Choose block">
       {[1,2,3,4,5,6].map(n => <button key={n} role="tab" aria-selected={block===n} className={block===n ? "active" : ""} onClick={() => changeBlock(n)}>Block {n}</button>)}
     </div>
-    <div className="map-workspace">
+    <div className="map-workspace map-workspace-stacked">
       <div className="map-canvas map-interactive" style={{overflow:"hidden", touchAction:"pan-y", background:"#f2f1e2", borderRadius:18, padding:12}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginBottom:10,color:"#304c38",fontSize:12,fontWeight:700}}><span>PAGSIBOL VILLAGE · BLOCK {block}</span><span>{Math.round(zoom*100)}%</span></div>
-        <div style={{overflow:"auto",maxHeight:"70vh"}}>
-          <svg viewBox="0 0 760 590" role="group" aria-label={`Clickable lot map for Block ${block}`} style={{width:"100%",minWidth:520,height:"auto",display:"block",transform:`scale(${zoom})`,transformOrigin:"top center",transition:"transform .15s"}}>
+        <div className="map-svg-viewport" style={{overflow:"auto",maxHeight:"none",width:"100%"}}>
+          <svg viewBox="0 0 760 590" role="group" aria-label={`Clickable lot map for Block ${block}`} style={{width:"100%",height:"auto",display:"block",transform:`scale(${zoom})`,transformOrigin:"top center",transition:"transform .15s"}}>
             <rect width="760" height="590" rx="12" fill="#edf0df"/>
             <path d="M20 70 L740 42 L740 118 L20 145 Z M20 190 L740 165 L740 240 L20 265 Z M20 310 L740 285 L740 360 L20 385 Z M20 430 L740 405 L740 480 L20 505 Z" fill="#d0d8b4"/>
             <path d="M10 130 L750 103 M10 250 L750 223 M10 370 L750 343 M10 490 L750 463" stroke="#fff" strokeWidth="23" strokeLinecap="round"/>
@@ -56,7 +56,7 @@ export default function VillageMapPage() {
         <div className="map-legend" style={{display:"flex",gap:16,flexWrap:"wrap",padding:"12px 2px 4px",color:"#64766a"}}>{[{c:COLORS[0],t:"Turquoise"},{c:COLORS[2],t:"Aubergine"},{c:COLORS[1],t:"Santan"}].map(x=><span key={x.t} style={{display:"inline-flex",alignItems:"center",gap:7}}><i style={{width:13,height:13,display:"inline-block",background:x.c,borderRadius:4}}/>{x.t}</span>)}</div>
         <div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}><button className="map-action-button" onClick={()=>setShowLots(v=>!v)}>{showLots?"Hide lot numbers":"Show lot numbers"}</button><button className="map-action-button" onClick={()=>setZoom(z=>Math.min(1.5,z+.1))}><ZoomIn size={15}/> Zoom in</button><button className="map-action-button" onClick={()=>setZoom(z=>Math.max(.7,z-.1))}><ZoomOut size={15}/> Zoom out</button><button className="map-action-button" onClick={()=>setZoom(1)}><RotateCcw size={15}/> Reset</button></div>
       </div>
-      <aside className="map-results">
+      <aside className="map-results map-results-below">
         <div className="map-results-head"><div><h2>Block {block}</h2><p>Lots listed in numerical order</p></div><MapPinned size={20}/></div>
         {selectedLot!==null && <div className="map-point-info"><strong><House size={15}/> Block {block}, Lot {selectedLot}</strong><p>{selectedHouse ? `Registered household · ${selectedHouse.street}` : "No registered household linked to this lot yet."}</p>{selectedHouse && <Link href="/directory">Open household directory <ArrowUpRight size={14}/></Link>}<button onClick={()=>setSelectedLot(null)}>Clear selection</button></div>}
         {showLots && <><h3 className="map-list-heading"><House size={15}/> Lots · 1–{LOTS_PER_BLOCK}</h3><div className="map-result-list">{matchingLots.map(lot=><button type="button" className="map-result" key={lot} onClick={()=>setSelectedLot(lot)} style={{width:"100%",textAlign:"left",background:selectedLot===lot?"#edf4e9":undefined,border:selectedLot===lot?"1px solid #66876a":undefined}}><div className="mini-house" style={{background:colorForLot(lot)}}><House size={18}/></div><div><strong>Block {block}, Lot {lot}</strong><small>{households.find(h=>Number(h.lot)===lot)?.street || "Not registered yet"}</small></div><ArrowUpRight size={16}/></button>)}</div></>}
