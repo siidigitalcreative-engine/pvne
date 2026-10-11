@@ -19,6 +19,13 @@ export type Business = {
   hours: string;
   status: "Open" | "Hours vary" | "Closed";
   emoji: string;
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    tiktok?: string;
+    lazada?: string;
+    shopee?: string;
+  };
 };
 
 export type Household = {
