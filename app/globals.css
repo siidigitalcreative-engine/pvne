@@ -1334,3 +1334,9 @@ img,svg,video,canvas{max-width:100%;height:auto}
   text-align: center !important;
   margin-inline: auto !important;
 }
+
+/* Community post metadata: remove the clock icon while keeping the timestamp. */
+.community-post-meta .post-time-meta svg,
+.community-post-meta .post-time-meta i {
+  display: none !important;
+}
