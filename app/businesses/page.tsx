@@ -140,6 +140,26 @@ export default function BusinessesPage() {
                 }}
               >
                 <p className="business-directory-description">{business.description}</p>
+                {business.socialLinks && Object.values(business.socialLinks).some((url) => Boolean(url?.trim())) && (
+                  <nav className="business-directory-socials" aria-label={`${business.name} social and shop links`}>
+                    {([
+                      ["facebook", "Facebook"],
+                      ["instagram", "Instagram"],
+                      ["tiktok", "TikTok"],
+                      ["lazada", "Lazada"],
+                      ["shopee", "Shopee"],
+                    ] as const).map(([platform, label]) => {
+                      const url = business.socialLinks?.[platform]?.trim();
+                      if (!url) return null;
+                      const safeUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+                      return (
+                        <a key={platform} href={safeUrl} target="_blank" rel="noopener noreferrer">
+                          {label}
+                        </a>
+                      );
+                    })}
+                  </nav>
+                )}
                 <div className="business-directory-actions">
                   <Link href="/directory" className="secondary-button">
                     <Store size={17} aria-hidden="true" />
@@ -329,6 +349,35 @@ export default function BusinessesPage() {
           font-size: 14px;
           line-height: 1.55;
           overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-socials {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+        }
+
+        .business-directory-page .business-directory-socials a {
+          display: inline-flex;
+          align-items: center;
+          min-height: 32px;
+          padding: 7px 10px;
+          border: 1px solid #dfe8df;
+          border-radius: 999px;
+          background: #f7faf6;
+          color: #315c3c;
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 1.2;
+          text-decoration: none;
+          white-space: nowrap;
+        }
+
+        .business-directory-page .business-directory-socials a:hover {
+          border-color: #b9cfb9;
+          background: #edf5eb;
         }
 
         .business-directory-page .business-directory-actions {
