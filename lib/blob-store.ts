@@ -59,22 +59,9 @@ async function readStoredData(): Promise<{ data: VillageData; exists: boolean }>
 }
 
 export async function readVillageData(): Promise<VillageData> {
-  const { data, exists } = await readStoredData();
-
-  // One-time cleanup: remove only known seeded IDs from the existing saved
-  // record and persist the cleaned result so old demo content does not return.
-  if (exists) {
-    const result = await list({ prefix: DATA_PATH, limit: 10 });
-    const file = result.blobs.find((blob) => blob.pathname === DATA_PATH);
-    if (file) {
-      const stored = await get(DATA_PATH, { access: "private" });
-      if (!stored || stored.statusCode !== 200) throw new Error("Could not verify stored village data before cleanup.");
-      const raw = await new Response(stored.stream).json();
-      const cleaned = cleanDemoRecords(raw);
-      if (JSON.stringify(raw) !== JSON.stringify(cleaned)) await writeVillageData(cleaned);
-    }
-  }
-
+  // Never write from a read. Writing a stale snapshot during demo cleanup can
+  // overwrite a newly published announcement or a recently updated house.
+  const { data } = await readStoredData();
   return data;
 }
 
