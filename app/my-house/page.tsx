@@ -40,10 +40,10 @@ export default function MyHousePage() {
   return <SiteShell><div className="page-container">
     <div className="page-hero compact"><span className="section-kicker">YOUR HOUSEHOLD</span><h1>My House</h1><p>Manage your Block and Lot details and see accounts registered to the same address.</p></div>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,320px),1fr))", gap: 22, alignItems: "start", marginBottom: 40 }}>
-      <section style={{ padding: 24, border: "1px solid #e0e8df", borderRadius: 18, background: "#fff" }}>
+      <section className="account-panel" style={{ padding: 24, border: "1px solid #e0e8df", borderRadius: 18, background: "#fff" }}>
         <h2 style={{ marginTop: 0, display: "flex", gap: 10, alignItems: "center" }}><House size={22}/> House details</h2>
-        <form onSubmit={submit} style={{ display: "grid", gap: 14 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <form onSubmit={submit} className="auth-form" style={{ display: "grid", gap: 15 }}>
+          <div className="house-fields-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <label>Block number<input required maxLength={20} value={house.blockNumber} onChange={e => setHouse({ ...house, blockNumber: e.target.value })} placeholder="e.g. 12" /></label>
             <label>Lot number<input required maxLength={20} value={house.lotNumber} onChange={e => setHouse({ ...house, lotNumber: e.target.value })} placeholder="e.g. 08" /></label>
           </div>
@@ -54,12 +54,22 @@ export default function MyHousePage() {
           <button className="primary-button" disabled={busy} type="submit">{busy ? "Saving…" : "Save house details"}</button>
         </form>
       </section>
-      <section style={{ padding: 24, border: "1px solid #e0e8df", borderRadius: 18, background: "#fff" }}>
+      <section className="account-panel" style={{ padding: 24, border: "1px solid #e0e8df", borderRadius: 18, background: "#fff" }}>
         <h2 style={{ marginTop: 0, display: "flex", gap: 10, alignItems: "center" }}><Users size={22}/> Household members</h2>
         <p style={{ color: "#68766c", fontSize: 13 }}>Active accounts registered to the same Block and Lot appear here.</p>
         {residents.length ? residents.map(r => <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #edf0ec" }}><span className="brand-mark"><Users size={17}/></span><div><strong>{r.name}</strong><div style={{ fontSize: 12, color: "#68766c" }}>{r.ownerRelationship === "other" ? r.ownerRelationshipOther || "Other" : labels[r.ownerRelationship] || "Resident"}</div></div></div>) : <p className="no-business">No other registered accounts found for this Block and Lot yet.</p>}
         <Link href="/directory" className="house-card-link" style={{ marginTop: 18 }}>Open House Directory <MapPinned size={16}/></Link>
       </section>
     </div>
+    <style jsx>{`
+      .account-panel { box-shadow: 0 12px 34px rgba(32, 58, 37, .045); min-width: 0; }
+      .auth-form label { display: grid; gap: 7px; color: #33483a; font-size: 12px; font-weight: 750; }
+      .auth-form input, .auth-form select { width: 100%; min-height: 45px; padding: 11px 13px; border: 1px solid #dce5dc; border-radius: 10px; background: #fff; color: #203628; font: inherit; font-size: 13px; outline: none; }
+      .auth-form input:focus, .auth-form select:focus { border-color: #6f9a73; box-shadow: 0 0 0 3px rgba(111,154,115,.13); }
+      @media (max-width: 620px) {
+        .account-panel { padding: 20px !important; }
+        .house-fields-row { grid-template-columns: minmax(0, 1fr) !important; }
+      }
+    `}</style>
   </div></SiteShell>;
 }
