@@ -266,9 +266,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
       <style jsx>{`
         .desktop-nav a.active, .mobile-nav a.active, .mobile-dropdown a.active {
-          background: #e7f2e8;
-          color: #245c38;
+          background: #e7f2e8 !important;
+          color: #245c38 !important;
           font-weight: 700;
+        }
+        .desktop-nav a:not(.active), .mobile-nav a:not(.active), .mobile-dropdown a:not(.active) {
+          background: transparent !important;
+          color: inherit;
         }
         .desktop-nav a.active, .mobile-nav a.active { border-radius: 10px; }
         .account-menu-trigger:hover { color: #245c38; }
