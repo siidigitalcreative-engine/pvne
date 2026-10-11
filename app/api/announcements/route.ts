@@ -10,6 +10,8 @@ const clean = (value: unknown, max: number) => typeof value === "string" ? value
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+    if (!user || user.status !== "active") return NextResponse.json({ error: "Please log in to view announcements." }, { status: 401 });
     const data = await readVillageData();
     const announcements = data.posts.filter(p => p.type === "announcement").sort((a,b) => Date.parse(b.createdAt)-Date.parse(a.createdAt));
     return NextResponse.json({ announcements }, { headers: { "Cache-Control": "no-store" } });
