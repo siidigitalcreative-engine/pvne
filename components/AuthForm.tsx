@@ -24,6 +24,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [blockNumber, setBlockNumber] = useState("");
   const [lotNumber, setLotNumber] = useState("");
   const [ownerRelationship, setOwnerRelationship] = useState("");
@@ -35,6 +38,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
     event.preventDefault();
     setBusy(true);
     setError("");
+    if (isSignup && password !== confirmPassword) {
+      setError("Passwords do not match. Please check both password fields.");
+      setBusy(false);
+      return;
+    }
     try {
       const response = await fetch(`/api/auth/${mode}`, {
         method: "POST",
@@ -127,8 +135,61 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </label>
           <label>
             Password
-            <input type="password" autoComplete={isSignup ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} minLength={isSignup ? 10 : 1} maxLength={128} required placeholder={isSignup ? "At least 10 characters" : "Enter your password"} />
+            <span className="auth-password-control" style={{ display: "flex", alignItems: "center", position: "relative", width: "100%" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete={isSignup ? "new-password" : "current-password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                minLength={isSignup ? 10 : 1}
+                maxLength={128}
+                required
+                placeholder={isSignup ? "At least 10 characters" : "Enter your password"}
+                style={{ width: "100%", paddingRight: 64, boxSizing: "border-box" }}
+              />
+              <button
+                className="auth-password-toggle"
+                style={{ position: "absolute", right: 12, border: 0, background: "transparent", padding: "6px 4px", color: "#28553b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </span>
           </label>
+
+          {isSignup && (
+            <label>
+              Confirm password
+              <span className="auth-password-control" style={{ display: "flex", alignItems: "center", position: "relative", width: "100%" }}>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  minLength={10}
+                  maxLength={128}
+                  required
+                  placeholder="Re-enter your password"
+                  aria-invalid={confirmPassword.length > 0 && password !== confirmPassword}
+                  style={{ width: "100%", paddingRight: 64, boxSizing: "border-box" }}
+                />
+                <button
+                  className="auth-password-toggle"
+                  style={{ position: "absolute", right: 12, border: 0, background: "transparent", padding: "6px 4px", color: "#28553b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+                  type="button"
+                  onClick={() => setShowConfirmPassword((visible) => !visible)}
+                  aria-label={showConfirmPassword ? "Hide confirmation password" : "Show confirmation password"}
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </span>
+              {confirmPassword.length > 0 && password !== confirmPassword && (
+                <small className="auth-password-mismatch">Passwords do not match.</small>
+              )}
+            </label>
+          )}
 
           {isSignup && <p className="auth-helper">New accounts start as Members. An Admin can update your role later.</p>}
           {error && <p className="auth-error" role="alert">{error}</p>}
