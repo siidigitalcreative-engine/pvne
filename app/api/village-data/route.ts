@@ -5,8 +5,14 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const data = await readVillageData();
-  return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
+  const user = await getCurrentUser();
+  if (!user || user.status !== "active") return NextResponse.json({ error: "Please log in to view village content." }, { status: 401, headers: { "Cache-Control": "no-store" } });
+  try {
+    const data = await readVillageData();
+    return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not load village data." }, { status: 503 });
+  }
 }
 
 export async function PUT(request: NextRequest) {
