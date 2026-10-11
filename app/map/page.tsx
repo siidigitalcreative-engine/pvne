@@ -163,7 +163,6 @@ export default function VillageMapPage() {
 
           <aside className="map-results map-results-below">
             <div className="map-results-head"><div><h2>Block {selectedBlock}</h2><p>{householdsInBlock.length} registered {householdsInBlock.length === 1 ? "property" : "properties"}, sorted by lot number</p></div><MapPinned size={20}/></div>
-            {selectedHouse && <div className="map-point-info"><strong><House size={15}/> Block {selectedBlock}, Lot {normalizeNumber(selectedHouse.lot)}</strong><p>{selectedHouse.street || "Street not specified"} · {selectedHouse.colorScheme || "House color not selected"}</p><Link href="/directory">Open house directory <ArrowUpRight size={14}/></Link><button type="button" onClick={()=>setSelectedLot("")}>Clear selection</button></div>}
             {visibleHouses.length > 0 ? <div className="map-result-list">{visibleHouses.map(house=><button type="button" className="map-result" key={house.id} onClick={()=>setSelectedLot(normalizeNumber(house.lot))} style={{width:"100%",textAlign:"left",background:selectedLot===normalizeNumber(house.lot)?"#edf4e9":undefined,border:selectedLot===normalizeNumber(house.lot)?"1px solid #66876a":undefined}}>
               <div className="mini-house" style={{background:colorForHouse(house)}}><House size={18}/></div>
               <div><strong>Block {selectedBlock}, Lot {normalizeNumber(house.lot)}</strong><small>{house.street || "Registered house"} · {house.colorScheme || "Color not selected"}</small></div><ArrowUpRight size={16}/>
@@ -174,6 +173,58 @@ export default function VillageMapPage() {
           </aside>
         </div>
       }
+
+      {selectedHouse && <div
+        role="presentation"
+        onClick={() => setSelectedLot("")}
+        style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(16,30,21,.48)",display:"flex",alignItems:"center",justifyContent:"center",padding:18,backdropFilter:"blur(3px)"}}
+      >
+        <section
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="house-details-title"
+          onClick={event => event.stopPropagation()}
+          style={{width:"min(100%,520px)",maxHeight:"85vh",overflowY:"auto",background:"#fff",borderRadius:20,boxShadow:"0 24px 80px rgba(0,0,0,.22)",padding:24,color:"#203628"}}
+        >
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16}}>
+            <div>
+              <span className="section-kicker">REGISTERED PROPERTY</span>
+              <h2 id="house-details-title" style={{fontSize:25,margin:"7px 0 4px"}}>Block {normalizeNumber(selectedHouse.block)}, Lot {normalizeNumber(selectedHouse.lot)}</h2>
+              <p style={{margin:0,color:"#68766c",fontSize:13}}>House details from the village registry</p>
+            </div>
+            <button type="button" aria-label="Close house details" onClick={()=>setSelectedLot("")} style={{border:"1px solid #dce5dc",borderRadius:10,background:"#fff",padding:"8px 12px",cursor:"pointer",fontSize:18}}>×</button>
+          </div>
+          <div style={{height:8,borderRadius:99,background:colorForHouse(selectedHouse),margin:"20px 0"}}/>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:12}}>
+            <div style={{padding:14,border:"1px solid #e2e9e1",borderRadius:12,background:"#fafcf9"}}>
+              <small style={{display:"block",color:"#718073",fontSize:11,marginBottom:6}}>BLOCK</small>
+              <strong>{normalizeNumber(selectedHouse.block)}</strong>
+            </div>
+            <div style={{padding:14,border:"1px solid #e2e9e1",borderRadius:12,background:"#fafcf9"}}>
+              <small style={{display:"block",color:"#718073",fontSize:11,marginBottom:6}}>LOT</small>
+              <strong>{normalizeNumber(selectedHouse.lot)}</strong>
+            </div>
+            <div style={{padding:14,border:"1px solid #e2e9e1",borderRadius:12,background:"#fafcf9"}}>
+              <small style={{display:"block",color:"#718073",fontSize:11,marginBottom:6}}>STREET</small>
+              <strong>{selectedHouse.street || "Not provided"}</strong>
+            </div>
+            <div style={{padding:14,border:"1px solid #e2e9e1",borderRadius:12,background:"#fafcf9"}}>
+              <small style={{display:"block",color:"#718073",fontSize:11,marginBottom:6}}>HOUSE COLOR</small>
+              <strong style={{display:"inline-flex",alignItems:"center",gap:7}}><i style={{width:12,height:12,borderRadius:4,background:colorForHouse(selectedHouse),border:"1px solid #d5dfd3"}}/>{selectedHouse.colorScheme || "Not selected"}</strong>
+            </div>
+          </div>
+          <div style={{marginTop:18}}>
+            <h3 style={{fontSize:14,margin:"0 0 8px"}}>Businesses at this address</h3>
+            {allBusinesses.filter(b => normalizeNumber((b.blockLot.match(/block\s*(\d+)/i) || [])[1]) === normalizeNumber(selectedHouse.block) && normalizeNumber((b.blockLot.match(/lot\s*(\d+)/i) || [])[1]) === normalizeNumber(selectedHouse.lot)).length > 0
+              ? allBusinesses.filter(b => { const bm=b.blockLot.match(/block\s*(\d+)/i), lm=b.blockLot.match(/lot\s*(\d+)/i); return normalizeNumber(bm?.[1])===normalizeNumber(selectedHouse.block) && normalizeNumber(lm?.[1])===normalizeNumber(selectedHouse.lot); }).map(b=><div key={b.id} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:"1px solid #edf1ec"}}><span style={{fontSize:22}}>{b.emoji || "🏪"}</span><div><strong style={{fontSize:13}}>{b.name}</strong><small style={{display:"block",color:"#718073"}}>{b.category}{b.locationType ? ` · ${b.locationType}` : ""}</small></div></div>)
+              : <p style={{fontSize:13,color:"#718073",margin:"0 0 6px"}}>No business listings are registered at this address.</p>}
+          </div>
+          <div style={{display:"flex",justifyContent:"flex-end",gap:10,marginTop:22,flexWrap:"wrap"}}>
+            <Link href="/directory" className="map-action-button">Open house directory <ArrowUpRight size={14}/></Link>
+            <button type="button" className="map-action-button" onClick={()=>setSelectedLot("")}>Close details</button>
+          </div>
+        </section>
+      </div>}
 
       <div className="notice-info"><Info size={22}/><div><strong>Map behavior</strong><p>Block tabs are generated from registered household records only. Within each block, houses are sorted from the lowest lot number to the highest. This visual layout is a directory view, not an official traced site plan.</p></div></div>
     </div>
