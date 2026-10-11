@@ -41,7 +41,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       </header>
       {menuOpen && <nav className="mobile-dropdown" aria-label="Expanded navigation">{nav.map(({href,label,icon:Icon})=><Link href={href} key={href} onClick={()=>setMenuOpen(false)}><Icon size={17}/>{label}</Link>)}</nav>}
       <nav className="mobile-nav" aria-label="Main navigation">
-        {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined}><Icon size={18}/><span>{label}</span></Link>)}
+        {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined} title={label}><Icon size={18}/><span>{label === "Village Map" ? <>Village<br />Map</> : label}</span></Link>)}
       </nav>
       <main>{children}</main>
       <footer className="site-footer">
