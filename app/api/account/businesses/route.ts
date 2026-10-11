@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
         { error: "Choose where the business is located: Inside Store or Inside PVNE." },
         { status: 400 },
       );
-    }\n    if (!["Open", "Hours vary", "Closed"].includes(String(status))) {
+    }
+    if (!["Open", "Hours vary", "Closed"].includes(String(status))) {
       return NextResponse.json({ error: "Choose a valid business status." }, { status: 400 });
     }
 
