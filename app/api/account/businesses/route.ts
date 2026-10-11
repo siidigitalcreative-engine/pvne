@@ -47,7 +47,12 @@ export async function POST(request: NextRequest) {
     if (name.length < 2 || !category || description.length < 5 || !hours) {
       return NextResponse.json({ error: "Enter a business name, category, description, and business hours." }, { status: 400 });
     }
-    if (locationType !== "Inside Store" && locationType !== "Inside PVNE") {\n      return NextResponse.json({ error: "Choose where the business is located: Inside Store or Inside PVNE." }, { status: 400 });\n    }\n    if (!["Open", "Hours vary", "Closed"].includes(String(status))) {
+    if (locationType !== "Inside Store" && locationType !== "Inside PVNE") {
+      return NextResponse.json(
+        { error: "Choose where the business is located: Inside Store or Inside PVNE." },
+        { status: 400 },
+      );
+    }\n    if (!["Open", "Hours vary", "Closed"].includes(String(status))) {
       return NextResponse.json({ error: "Choose a valid business status." }, { status: 400 });
     }
 
