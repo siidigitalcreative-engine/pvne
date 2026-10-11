@@ -36,7 +36,13 @@ export function HomeDashboard() {
             {search.trim() && <div className="search-suggestions">{filtered.length ? filtered.map((r, i) => <Link href={r.href} key={r.label + i}><Search size={15}/><span><strong>{r.label}</strong><small>{r.detail}</small></span><ChevronRight size={16}/></Link>) : <p>No sample results found. Try “pizza”, “water”, or “carpool”.</p>}</div>}
           </div>
           <div className="hero-note"><ShieldCheck size={16}/> Built around the people and places of Pagsibol</div>
-        <div className="hero-side-card"><div className="weather-icon">☀</div><div><strong>Welcome, neighbor</strong><span>Find what you need in the village.</span></div><span className="hero-card-dot"/></div>
+        <Link href="/community/chat" className="hero-side-card" aria-label="Open the general community chat">
+          <div className="weather-icon" aria-hidden="true">☀</div>
+          <div className="hero-welcome-copy">
+            <strong>Welcome, neighbor <span className="hero-card-dot" aria-hidden="true" style={{ position: "static", display: "inline-block", verticalAlign: "middle", marginLeft: 8, width: 8, height: 8, borderRadius: "50%", flex: "0 0 8px" }} /></strong>
+            <span>Find what you need in the village.</span>
+          </div>
+        </Link>
         </div>
       </section>
 
