@@ -8,11 +8,11 @@ import { useRouter } from "next/navigation";
 type AuthFormProps = { mode: "login" | "signup" };
 
 const relationshipOptions = [
-  { value: "owner", label: "Property Owner" },
+  { value: "owner", label: "Homeowner" },
   { value: "co_owner", label: "Co-owner" },
-  { value: "spouse", label: "Spouse of Property Owner" },
-  { value: "domestic_partner", label: "Domestic Partner of Property Owner" },
-  { value: "family_member", label: "Immediate Family Member of Property Owner" },
+  { value: "spouse", label: "Spouse of Homeowner" },
+  { value: "domestic_partner", label: "Domestic Partner of Homeowner" },
+  { value: "family_member", label: "Immediate Family Member of Homeowner" },
   { value: "authorized_representative", label: "Authorized Household Representative" },
   { value: "tenant", label: "Tenant / Lessee" },
   { value: "other", label: "Other" },
@@ -88,7 +88,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
               </div>
 
               <label>
-                Relationship to property owner
+                Relationship to homeowner
                 <select
                   value={ownerRelationship}
                   onChange={(event) => setOwnerRelationship(event.target.value)}
@@ -100,7 +100,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     height: 48,
                     boxSizing: "border-box",
                     padding: "12px 14px",
-                    fontSize: 15,
+                    fontSize: 14,
+                    fontWeight: 400,
                     lineHeight: 1.4,
                   }}
                 >
