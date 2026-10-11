@@ -3,7 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { SiteShell } from "@/components/SiteShell";
-import { UserRound, ShieldCheck } from "lucide-react";
+import { UserRound } from "lucide-react";
 
 type User = { id: string; name: string; email: string; role: string; createdAt: string };
 export default function ProfilePage() {
@@ -44,7 +44,7 @@ export default function ProfilePage() {
       <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
         <label>Full name<input value={name} onChange={e => setName(e.target.value)} required minLength={2} maxLength={80} /></label>
         <label>Email address<input value={user.email} readOnly disabled /><small>Your email address is used to sign in and cannot be changed here.</small></label>
-        <div style={{ borderTop: "1px solid #e8eee7", paddingTop: 18 }}><h3 style={{ margin: "0 0 5px" }}>Change password</h3><p style={{ color: "#68766c", fontSize: 13, marginTop: 0 }}>Leave these fields blank if you don't want to change your password.</p></div>
+        <div style={{ borderTop: "1px solid #e8eee7", paddingTop: 18 }}><h3 style={{ margin: "0 0 5px" }}>Change password</h3><p style={{ color: "#68766c", fontSize: 13, marginTop: 0 }}>Leave these fields blank if you do not want to change your password.</p></div>
         <label>Current password<input type="password" autoComplete="current-password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} /></label>
         <label>New password<input type="password" autoComplete="new-password" minLength={10} maxLength={128} value={newPassword} onChange={e => setNewPassword(e.target.value)} /></label>
         <label>Confirm new password<input type="password" autoComplete="new-password" minLength={10} maxLength={128} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} /></label>
