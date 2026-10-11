@@ -49,6 +49,7 @@ export async function POST(request: Request) {
   const blockNumber = cleanField(body.blockNumber, 20);
   const lotNumber = cleanField(body.lotNumber, 20);
   const streetName = cleanField(body.streetName, 100);
+  const colorScheme = cleanField(body.colorScheme, 30);
   const ownerRelationship = cleanField(body.ownerRelationship, 40);
   const ownerRelationshipOther = cleanField(body.ownerRelationshipOther, 100);
 
@@ -74,6 +75,10 @@ export async function POST(request: Request) {
 
   if (!lotNumber) {
     return NextResponse.json({ error: "Enter your lot number." }, { status: 400 });
+  }
+
+  if (!colorScheme) {
+    return NextResponse.json({ error: "Select your house color." }, { status: 400 });
   }
 
   if (!RELATIONSHIPS.has(ownerRelationship)) {
@@ -117,6 +122,7 @@ export async function POST(request: Request) {
       blockNumber,
       lotNumber,
       streetName,
+      colorScheme,
       ownerRelationship,
       ownerRelationshipOther: ownerRelationship === "other" ? ownerRelationshipOther : "",
     };
