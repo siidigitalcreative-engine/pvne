@@ -66,10 +66,12 @@ export default function VillageMapPage() {
           const businesses = Array.isArray(data.businesses) ? data.businesses : [];
           setAllHouseholds(households);
           setAllBusinesses(businesses);
-          setSelectedBlock(current => {
-            const blocks = Array.from(new Set(households.map((h: Household) => normalizeNumber(h.block)))).sort(sortNumeric);
-            return current && blocks.includes(current) ? current : (blocks[0] || "");
-          });
+          const registeredBlocks = Array.from(
+            new Set<string>(households.map((h: Household) => normalizeNumber(h.block)).filter(Boolean))
+          ).sort(sortNumeric);
+          setSelectedBlock((current: string) =>
+            current && registeredBlocks.includes(current) ? current : (registeredBlocks[0] || "")
+          );
           setLoadError("");
           setLoaded(true);
         }
