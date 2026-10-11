@@ -16,12 +16,12 @@ type Resident = {
 };
 
 const relationshipLabels: Record<string, string> = {
-  owner: "Property owner",
+  owner: "Homeowner",
   co_owner: "Co-owner",
-  spouse: "Spouse of property owner",
-  domestic_partner: "Domestic partner of property owner",
-  family_member: "Family member of property owner",
-  authorized_representative: "Authorized representative",
+  spouse: "Spouse of homeowner",
+  domestic_partner: "Domestic partner of homeowner",
+  family_member: "Immediate family member of homeowner",
+  authorized_representative: "Authorized household representative",
   tenant: "Tenant",
   other: "Other relationship",
 };
