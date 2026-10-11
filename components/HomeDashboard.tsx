@@ -36,8 +36,8 @@ export function HomeDashboard() {
             {search.trim() && <div className="search-suggestions">{filtered.length ? filtered.map((r, i) => <Link href={r.href} key={r.label + i}><Search size={15}/><span><strong>{r.label}</strong><small>{r.detail}</small></span><ChevronRight size={16}/></Link>) : <p>No sample results found. Try “pizza”, “water”, or “carpool”.</p>}</div>}
           </div>
           <div className="hero-note"><ShieldCheck size={16}/> Built around the people and places of Pagsibol</div>
-        </div>
         <div className="hero-side-card"><div className="weather-icon">☀</div><div><strong>Welcome, neighbor</strong><span>Find what you need in the village.</span></div><span className="hero-card-dot"/></div>
+        </div>
       </section>
 
       <section className="quick-actions container">
