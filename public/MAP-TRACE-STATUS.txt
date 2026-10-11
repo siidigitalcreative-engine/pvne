@@ -1,0 +1,6 @@
+Pagsibol Village map source and tracing status
+
+Source: user-supplied PVNE20PHASE202(2).pdf, page 1.
+The map asset is rendered directly from the supplied PDF at high resolution and preserved as the visual source of truth.
+
+Important: This package does not yet contain verified lot-by-lot vector polygons. The current map UI supports zoom/pan and directory search, but individual lot hit areas must not be presented as accurate until traced and reviewed against the source plan.
