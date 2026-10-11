@@ -155,11 +155,11 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <div className="account-menu-wrap" ref={accountMenuRef} style={{ position: "relative" }}>
               <button
                 type="button"
-                className="header-login account-menu-trigger"
+                className="account-menu-trigger"
                 aria-haspopup="menu"
                 aria-expanded={accountMenuOpen}
                 onClick={() => setAccountMenuOpen((open) => !open)}
-                style={{ display: "inline-flex", alignItems: "center", gap: 7, maxWidth: 190 }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 7, maxWidth: 190, border: 0, outline: "none", boxShadow: "none", background: "transparent", padding: "8px 4px", color: "#2b4634", cursor: "pointer", font: "inherit" }}
               >
                 <span className="account-name" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {currentUser.name}
@@ -271,6 +271,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           font-weight: 700;
         }
         .desktop-nav a.active, .mobile-nav a.active { border-radius: 10px; }
+        .account-menu-trigger:hover { color: #245c38; }
+        .account-menu-trigger:focus-visible { outline: 2px solid #9bb9a0; outline-offset: 3px; border-radius: 4px; }
       `}</style>
       <main>{children}</main>
 
