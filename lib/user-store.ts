@@ -15,6 +15,7 @@ export type StoredUser = {
   lotNumber?: string;
   ownerRelationship?: string;
   ownerRelationshipOther?: string;
+  colorScheme?: "Turquoise" | "Aubergine" | "Santan";
 };
 
 const USERS_PATH = "pvne-private/users.enc.json";
@@ -120,6 +121,7 @@ export function publicUser(user: StoredUser) {
     lotNumber: user.lotNumber ?? "",
     ownerRelationship: user.ownerRelationship ?? "",
     ownerRelationshipOther: user.ownerRelationshipOther ?? "",
+    colorScheme: user.colorScheme ?? "Turquoise",
   };
 }
 
