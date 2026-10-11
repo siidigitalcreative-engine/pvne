@@ -27,16 +27,18 @@ export async function POST(request: NextRequest) {
     const title = clean(body.title, 140);
     const content = typeof body.body === "string" ? body.body.trim().slice(0, 8000) : "";
     const location = clean(body.location, 120) || "Pagsibol Village";
-    const attachments = Array.isArray(body.attachments) ? body.attachments.filter((item): item is Attachment =>
+    const validAttachments = (value: unknown): Attachment[] => Array.isArray(value) ? value.filter((item): item is Attachment =>
       !!item && typeof item === "object" && typeof (item as Attachment).name === "string" &&
       typeof (item as Attachment).url === "string" && (item as Attachment).url.startsWith("https://") &&
       typeof (item as Attachment).type === "string" && typeof (item as Attachment).size === "number").slice(0,10) : [];
+    const photos = validAttachments(body.photos).filter(item => item.type.startsWith("image/"));
+    const attachments = validAttachments(body.attachments).filter(item => !item.type.startsWith("image/"));
     if (title.length < 3 || content.length < 5) return NextResponse.json({ error: "Enter a title and announcement details." }, { status: 400 });
     const data = await readVillageData();
     const announcement = {
       id: `notice-${crypto.randomUUID()}`, category: "Official Announcement", title, body: content,
       location, author: user.name, createdAt: new Date().toISOString(), comments: 0,
-      type: "announcement" as const, attachments,
+      type: "announcement" as const, photos, attachments,
     } as VillagePost;
     data.posts.unshift(announcement);
     await writeVillageData(data);
