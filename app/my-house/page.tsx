@@ -12,9 +12,9 @@ const options = [
 ];
 const labels: Record<string, string> = Object.fromEntries(options);
 type Resident = { id: string; name: string; ownerRelationship: string; ownerRelationshipOther?: string };
-type HouseData = { blockNumber: string; lotNumber: string; ownerRelationship: string; ownerRelationshipOther: string };
+type HouseData = { blockNumber: string; lotNumber: string; ownerRelationship: string; ownerRelationshipOther: string; colorScheme: "Turquoise" | "Aubergine" | "Santan" };
 export default function MyHousePage() {
-  const [house, setHouse] = useState<HouseData>({ blockNumber: "", lotNumber: "", ownerRelationship: "", ownerRelationshipOther: "" });
+  const [house, setHouse] = useState<HouseData>({ blockNumber: "", lotNumber: "", ownerRelationship: "", ownerRelationshipOther: "", colorScheme: "Turquoise" });
   const [residents, setResidents] = useState<Resident[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -32,7 +32,7 @@ export default function MyHousePage() {
     try {
       const r = await fetch("/api/account/house", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(house) });
       const d = await r.json(); if (!r.ok) throw new Error(d.error || "Could not save details.");
-      await load(); setMessage("Your house details have been saved and will be reflected in the House Directory.");
+      await load(); setMessage("Your house details and color have been saved and will be reflected in the House Directory and village map.");
     } catch (e) { setError(e instanceof Error ? e.message : "Could not save details."); }
     finally { setBusy(false); }
   }
@@ -47,6 +47,7 @@ export default function MyHousePage() {
             <label>Block number<input required maxLength={20} value={house.blockNumber} onChange={e => setHouse({ ...house, blockNumber: e.target.value })} placeholder="e.g. 12" /></label>
             <label>Lot number<input required maxLength={20} value={house.lotNumber} onChange={e => setHouse({ ...house, lotNumber: e.target.value })} placeholder="e.g. 08" /></label>
           </div>
+          <label>House color<select required value={house.colorScheme} onChange={e => setHouse({ ...house, colorScheme: e.target.value as HouseData["colorScheme"] })}><option value="Turquoise">Turquoise</option><option value="Aubergine">Aubergine</option><option value="Santan">Santan</option></select><small style={{ display: "flex", alignItems: "center", gap: 8, color: "#68766c", fontWeight: 400 }}><span style={{ width: 14, height: 14, borderRadius: 4, background: house.colorScheme === "Turquoise" ? "#9bd9df" : house.colorScheme === "Aubergine" ? "#9a91b8" : "#a9d69e" }} />This color will appear on your household listing and village map.</small></label>
           <label>Relationship to Homeowner<select required value={house.ownerRelationship} onChange={e => setHouse({ ...house, ownerRelationship: e.target.value })}><option value="">Select relationship</option>{options.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
           {house.ownerRelationship === "other" && <label>Please specify<input required maxLength={100} value={house.ownerRelationshipOther} onChange={e => setHouse({ ...house, ownerRelationshipOther: e.target.value })} placeholder="Describe your relationship" /></label>}
           {message && <p role="status" style={{ color: "#23653d", margin: 0 }}>{message}</p>}
