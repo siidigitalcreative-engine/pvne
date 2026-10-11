@@ -1,65 +1,459 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowDownWideNarrow, ArrowUpRight, Bell, Check, ChevronDown, CircleHelp, Clock3, Hash, Heart, MessageCircle, MessagesSquare, Plus, Search, Send, ShieldCheck, SlidersHorizontal, Sparkles, X } from "lucide-react";
-import { SiteShell } from "@/components/SiteShell";
-import { categories, seedPosts } from "@/lib/data";
 
-type Comment = { id: string; author: string; body: string; createdAt: string; replies: Comment[] };
-type Post = { id: string; category: string; title: string; body: string; location?: string; author: string; createdAt: string; comments: number; type: "post" | "announcement"; commentsList: Comment[]; likes: number };
-const fallback: Post[] = seedPosts.filter(p => p.type === "post").map((p, i) => ({ ...p, likes: [8, 5, 3, 2][i] ?? 0, commentsList: [] }));
-const initials = (s: string) => s.split(/\s+/).slice(0, 2).map(x => x[0]).join("").toUpperCase();
-function ago(value: string) { const d = new Date(value); if (Number.isNaN(d.getTime())) return value; const mins = Math.max(1, Math.floor((Date.now() - d.getTime()) / 60000)); if (mins < 60) return `${mins}m ago`; if (mins < 1440) return `${Math.floor(mins / 60)}h ago`; return `${Math.floor(mins / 1440)}d ago`; }
-export default function CommunityPage() {
-  const [posts, setPosts] = useState<Post[]>(fallback); const [q, setQ] = useState(""); const [topic, setTopic] = useState("All topics"); const [sort, setSort] = useState("Latest"); const [selected, setSelected] = useState<string | null>(null); const [createOpen, setCreateOpen] = useState(false); const [title, setTitle] = useState(""); const [body, setBody] = useState(""); const [category, setCategory] = useState(categories[0]); const [author, setAuthor] = useState(""); const [commentText, setCommentText] = useState(""); const [replyTo, setReplyTo] = useState<string | null>(null); const [replyText, setReplyText] = useState(""); const [busy, setBusy] = useState(false); const [notice, setNotice] = useState(""); const [persistent, setPersistent] = useState(false); const [view, setView] = useState("Posts");
-  useEffect(() => { fetch("/api/community", { cache: "no-store" }).then(r => r.json()).then(data => { if (Array.isArray(data.posts)) setPosts(data.posts); setPersistent(Boolean(data.persistent)); }).catch(() => {}); }, []);
-  const filtered = useMemo(() => { const found = posts.filter(p => (topic === "All topics" || p.category === topic) && `${p.title} ${p.body} ${p.category} ${p.location ?? ""} ${p.author}`.toLowerCase().includes(q.toLowerCase())); return [...found].sort((a,b) => sort === "Popular" ? (b.likes + b.comments) - (a.likes + a.comments) : sort === "Unanswered" ? a.comments - b.comments : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); }, [posts, topic, q, sort]);
-  const openPost = posts.find(p => p.id === selected) ?? null;
-  async function action(payload: Record<string, unknown>) { setBusy(true); setNotice(""); try { const r = await fetch("/api/community", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...payload, author: author.trim() || "Village resident" }) }); const data = await r.json(); if (!r.ok) throw new Error(data.error || "Could not save this change."); if (data.post) setPosts(old => old.map(p => p.id === data.post.id ? data.post : p)); if (data.post && payload.action === "create") { setPosts(old => [data.post, ...old.filter(p => p.id !== data.post.id)]); setSelected(data.post.id); setCreateOpen(false); setTitle(""); setBody(""); } setPersistent(Boolean(data.persistent)); return true; } catch (e) { setNotice(e instanceof Error ? e.message : "Could not save this change."); return false; } finally { setBusy(false); } }
-  async function createPost() { if (await action({ action: "create", title, body, category })) setNotice("Discussion published."); }
-  async function comment() { if (!openPost || !commentText.trim()) return; if (await action({ action: "comment", postId: openPost.id, body: commentText })) setCommentText(""); }
-  async function reply(commentId: string) { if (!openPost || !replyText.trim()) return; if (await action({ action: "reply", postId: openPost.id, commentId, body: replyText })) { setReplyText(""); setReplyTo(null); } }
-  return <SiteShell><div className="page-container community-page">
-    <div className="community-heading"><div><span className="section-kicker">PAGSIBOL VILLAGE · COMMUNITY HUB</span><h1>Good neighbors, <em>better together.</em></h1><p>Ask the neighborhood, share useful finds, and keep the conversation going.</p></div><div className="community-heading-actions"><span className="community-online"><i/> Neighborhood board</span><button className="primary-button" onClick={() => { setCreateOpen(true); setNotice(""); }}><Plus size={16}/> Start a discussion</button></div></div>
-    <div className="community-feature-strip"><div className="feature-icon"><MessagesSquare size={20}/></div><div><strong>One topic. Two ways to connect.</strong><p>Use Posts for questions and updates. Jump into the topic’s chat room for quick, live conversation.</p></div><span className="feature-pill"><Sparkles size={13}/> Community-powered</span></div>
-    <div className="community-main-layout"><aside className="topic-sidebar community-topics"><div className="topic-side-head"><h3>Explore topics</h3><span>{categories.length}</span></div><button className={topic === "All topics" ? "topic-active" : ""} onClick={() => setTopic("All topics")}><MessagesSquare size={16}/> All discussions <span className="topic-count">{posts.length}</span></button>{categories.map((c,i) => <button key={c} className={topic === c ? "topic-active" : ""} onClick={() => setTopic(c)}><span className={`topic-dot dot-${i%5}`}/>{c}</button>)}<div className="topic-sidebar-divider"/><Link href="/announcements" className="sidebar-announcement"><Bell size={15}/> Official announcements <ArrowUpRight size={14}/></Link><div className="community-guidelines"><ShieldCheck size={17}/><strong>Keep it neighborly</strong><p>Be kind, protect personal information, and keep posts relevant to village life.</p></div></aside>
-    <section className="community-content"><div className="community-search-row"><label className="directory-search"><Search size={18}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search posts, questions, or neighbors..."/><kbd>⌘ K</kbd></label><button className="community-filter-button" onClick={() => setSort(sort === "Latest" ? "Popular" : sort === "Popular" ? "Unanswered" : "Latest")}><SlidersHorizontal size={15}/><span>{sort}</span><ChevronDown size={14}/></button></div>
-      <div className="community-view-tabs"><button className={view === "Posts" ? "active" : ""} onClick={()=>setView("Posts")}><MessagesSquare size={16}/> Posts <span>{filtered.length}</span></button><button className={view === "Chat rooms" ? "active" : ""} onClick={()=>setView("Chat rooms")}><MessageCircle size={16}/> Topic chat rooms</button><span className="view-tab-spacer"/><span className="persistence-indicator"><i className={persistent ? "saved" : ""}/>{persistent ? "Saved across visits" : "Preview data"}</span></div>
-      {view === "Chat rooms" ? <div className="topic-chat-list"><div className="chat-list-intro"><div className="feature-icon"><MessageCircle size={20}/></div><div><h2>Topic chat rooms</h2><p>Each topic has a dedicated place for quick back-and-forth conversation.</p></div></div>{categories.map((c,i)=><div className="topic-chat-row" key={c}><span className={`chat-topic-icon chat-${i%5}`}><Hash size={17}/></span><div><strong>{c}</strong><small>Chat room for this topic</small></div><Link href={`/community/chat?topic=${encodeURIComponent(c)}`}>Open chat <ArrowUpRight size={14}/></Link></div>)}</div> : <>
-      <div className="feed-section-heading"><div><h2>{topic === "All topics" ? "Neighborhood discussions" : topic}</h2><p>{topic === "All topics" ? "Questions, ideas, and helpful conversations from your neighbors." : `Posts and questions shared in ${topic}.`}</p></div><span className="feed-count">{filtered.length} {filtered.length === 1 ? "post" : "posts"}</span></div>
-      {notice && <div className={`community-notice ${notice.includes("published") ? "success" : ""}`}><span>{notice.includes("published") ? <Check size={15}/> : <CircleHelp size={15}/>}</span>{notice}<button onClick={()=>setNotice("")} aria-label="Dismiss notice"><X size={14}/></button></div>}
-      {filtered.length ? <div className="community-post-list">{filtered.map(p=><article className="community-post-card" key={p.id}><div className="post-card-avatar">{initials(p.author)}</div><div className="community-post-main"><div className="community-post-meta"><strong>{p.author}</strong><span className="resident-tag"><Check size={10}/> Resident</span><span className="meta-separator">·</span><span
-  className="post-time-meta"
-  style={{
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    flex: "0 0 auto",
-    whiteSpace: "nowrap",
-    fontSize: "inherit",
-    lineHeight: "1.2",
-    verticalAlign: "middle",
-  }}
->
-  <Clock3
-    size={12}
-    aria-hidden="true"
-    style={{
-      width: "12px",
-      height: "12px",
-      flex: "0 0 12px",
-      display: "block",
-      strokeWidth: 1.8,
-    }}
-  />
-  <span style={{ fontSize: "inherit", lineHeight: "inherit", display: "inline-block" }}>
-    {ago(p.createdAt)}
-  </span>
-</span><span className="post-category-chip">{p.category}</span></div><button className="post-title-button" onClick={()=>{setSelected(p.id);setNotice("");}}><h3>{p.title}</h3></button><p className="community-post-excerpt">{p.body}</p>{p.location && <span className="post-location-label">⌖ {p.location}</span>}<div className="community-post-actions"><button onClick={()=>{setSelected(p.id);setNotice("");}}><MessageCircle size={15}/>{p.comments} {p.comments === 1 ? "comment" : "comments"}</button><button onClick={()=>action({action:"like",postId:p.id,liked:false})}><Heart size={15}/>{p.likes} helpful</button><span className="post-action-spacer"/><button className="open-thread-button" onClick={()=>{setSelected(p.id);setNotice("");}}>Join discussion <ArrowUpRight size={14}/></button></div><div className="post-chat-link"><span><MessageCircle size={14}/> Want a quicker conversation?</span><Link href={`/community/chat?topic=${encodeURIComponent(p.category)}`}>Open {p.category} chat <ArrowUpRight size={13}/></Link></div></div></article>)}</div> : <div className="empty-state"><Search size={26}/><h3>No matching discussions</h3><p>Try another search or select a different topic.</p><button className="secondary-button" onClick={()=>{setQ("");setTopic("All topics");}}>Clear filters</button></div>}
-      <div className="community-end-note"><Sparkles size={15}/><span>Have something helpful to share? Your neighbors are listening.</span><button onClick={()=>setCreateOpen(true)}>Write a post <ArrowUpRight size={13}/></button></div>
-      </>}
-    </section></div>
-    {createOpen && <div className="community-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setCreateOpen(false);}}><section className="community-modal" role="dialog" aria-modal="true" aria-labelledby="create-post-heading"><div className="community-modal-head"><div><span className="section-kicker">COMMUNITY HUB</span><h2 id="create-post-heading">Start a discussion</h2><p>Share a question or update with your neighbors.</p></div><button className="community-modal-close" onClick={()=>setCreateOpen(false)} aria-label="Close"><X size={18}/></button></div><label className="community-field-label">Your display name <span>Optional</span><input value={author} onChange={e=>setAuthor(e.target.value)} placeholder="e.g. MF Navarro" maxLength={50}/></label><label className="community-field-label">Choose a topic<select value={category} onChange={e=>setCategory(e.target.value)}>{categories.map(c=><option key={c}>{c}</option>)}</select></label><label className="community-field-label">Discussion title<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="What would you like to ask or share?" maxLength={120}/></label><label className="community-field-label">Details<textarea value={body} onChange={e=>setBody(e.target.value)} placeholder="Add context so neighbors can help..." rows={5} maxLength={3000}/></label>{notice && <div className="community-notice">{notice}</div>}<div className="community-modal-foot"><span><ShieldCheck size={14}/> Be respectful. Avoid sharing private details.</span><button className="primary-button" disabled={busy || title.trim().length<4 || body.trim().length<5} onClick={createPost}>{busy ? "Publishing..." : "Publish discussion"}<Send size={14}/></button></div></section></div>}
-    {openPost && <div className="community-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setSelected(null);}}><section className="community-modal thread-modal" role="dialog" aria-modal="true" aria-labelledby="thread-heading"><div className="community-modal-head"><div><span className="post-category-chip">{openPost.category}</span><h2 id="thread-heading">{openPost.title}</h2><p>Posted by {openPost.author} · {ago(openPost.createdAt)}</p></div><button className="community-modal-close" onClick={()=>setSelected(null)} aria-label="Close"><X size={18}/></button></div><p className="thread-post-body">{openPost.body}</p><div className="thread-chat-cta"><div><MessageCircle size={17}/><span><strong>Continue in chat</strong><small>Take quick follow-up questions to the topic room.</small></span></div><Link href={`/community/chat?topic=${encodeURIComponent(openPost.category)}`}>Open topic chat <ArrowUpRight size={14}/></Link></div><div className="thread-comments-heading"><h3>Comments and replies</h3><span>{openPost.commentsList?.length ?? 0}</span></div><div className="thread-comment-form"><div className="post-card-avatar small-avatar">{initials(author || "Village resident")}</div><div><textarea value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="Add a thoughtful comment..." rows={2}/><div className="thread-form-actions"><small>Be helpful and respectful.</small><button className="primary-button" disabled={busy || !commentText.trim()} onClick={comment}><Send size={13}/> Comment</button></div></div></div><div className="thread-comments">{(openPost.commentsList ?? []).length ? openPost.commentsList.map(c=><div className="thread-comment" key={c.id}><div className="post-card-avatar small-avatar">{initials(c.author)}</div><div className="thread-comment-content"><div className="thread-comment-meta"><strong>{c.author}</strong><span>{ago(c.createdAt)}</span></div><p>{c.body}</p><button className="reply-trigger" onClick={()=>{setReplyTo(replyTo===c.id?null:c.id);setReplyText("");}}>Reply</button>{replyTo===c.id && <div className="thread-reply-form"><textarea value={replyText} onChange={e=>setReplyText(e.target.value)} rows={2} placeholder={`Reply to ${c.author}...`}/><button className="primary-button" disabled={busy || !replyText.trim()} onClick={()=>reply(c.id)}><Send size={12}/> Send reply</button></div>}{(c.replies ?? []).map(r=><div className="thread-reply" key={r.id}><div className="post-card-avatar tiny-avatar">{initials(r.author)}</div><div><div className="thread-comment-meta"><strong>{r.author}</strong><span>{ago(r.createdAt)}</span></div><p>{r.body}</p></div></div>)}</div></div>) : <div className="thread-empty"><MessageCircle size={21}/><strong>Start the conversation</strong><span>Be the first to leave a comment on this post.</span></div>}</div>{notice && <div className="community-notice">{notice}</div>}<div className="thread-modal-bottom"><span><ShieldCheck size={14}/> Keep personal information private.</span><button className="secondary-button" onClick={()=>setSelected(null)}>Done</button></div></section></div>}
-  </div></SiteShell>;
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { Search, Store, MapPinned, ArrowUpRight, Filter } from "lucide-react";
+import { SiteShell } from "@/components/SiteShell";
+import { seedBusinesses } from "@/lib/data";
+
+export default function BusinessesPage() {
+  const [q, setQ] = useState("");
+  const [category, setCategory] = useState("All categories");
+
+  const categories = [
+    "All categories",
+    ...Array.from(new Set(seedBusinesses.map((business) => business.category))),
+  ];
+
+  const rows = useMemo(
+    () =>
+      seedBusinesses.filter(
+        (business) =>
+          `${business.name} ${business.category} ${business.blockLot} ${business.description}`
+            .toLowerCase()
+            .includes(q.toLowerCase()) &&
+          (category === "All categories" || business.category === category),
+      ),
+    [q, category],
+  );
+
+  return (
+    <SiteShell>
+      <div className="page-container business-directory-page">
+        <div className="page-hero compact">
+          <span className="section-kicker">SUPPORT YOUR NEIGHBORS</span>
+          <h1>Village business directory</h1>
+          <p>
+            Discover food, products, and services offered by residents. Every
+            listing can link back to its house and lot.
+          </p>
+        </div>
+
+        <div className="directory-toolbar">
+          <label className="directory-search">
+            <Search size={19} aria-hidden="true" />
+            <input
+              value={q}
+              onChange={(event) => setQ(event.target.value)}
+              placeholder="Search a business, product, or service..."
+              aria-label="Search businesses"
+            />
+          </label>
+          <select
+            className="select-filter"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            aria-label="Filter by category"
+          >
+            {categories.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="result-summary">
+          {rows.length} sample businesses <span>· Listings shown are illustrative</span>
+        </div>
+
+        <div className="business-directory-list">
+          {rows.map((business) => (
+            <div
+              className="business-directory-group"
+              key={business.id}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 0,
+                overflow: "hidden",
+                border: "1px solid #dfe8df",
+                borderRadius: "24px",
+                background: "#ffffff",
+              }}
+            >
+              <article
+                className="business-directory-item"
+                style={{
+                  border: 0,
+                  borderRadius: 0,
+                  boxShadow: "none",
+                  margin: 0,
+                }}
+              >
+                <div
+                  className="business-directory-image"
+                  role="img"
+                  aria-label={`${business.name} image`}
+                >
+                  <span aria-hidden="true">{business.emoji}</span>
+                </div>
+
+                <div className="business-directory-main">
+                  <div className="business-directory-heading">
+                    <h2>{business.name}</h2>
+                    <span className="business-directory-category">{business.category}</span>
+                  </div>
+
+                  <div className="business-directory-location">
+                    <MapPinned size={17} aria-hidden="true" />
+                    <span>{business.blockLot}</span>
+                  </div>
+
+                  <div className="business-directory-divider" />
+
+                  <div
+                    className={
+                      business.status === "Open"
+                        ? "business-directory-status status-open"
+                        : "business-directory-status status-variable"
+                    }
+                  >
+                    <span aria-hidden="true">●</span> {business.status}
+                  </div>
+
+                  <p className="business-directory-hours">{business.hours}</p>
+                </div>
+              </article>
+
+              <section
+                className="business-directory-extra"
+                aria-label={`${business.name} details`}
+                style={{
+                  margin: 0,
+                  border: 0,
+                  borderTop: "1px solid #e5ece5",
+                  borderRadius: 0,
+                  boxShadow: "none",
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              >
+                <p className="business-directory-description">{business.description}</p>
+                <div className="business-directory-actions">
+                  <Link href="/directory" className="secondary-button">
+                    <Store size={17} aria-hidden="true" />
+                    View household
+                  </Link>
+                  <button
+                    type="button"
+                    className="primary-button"
+                    onClick={() =>
+                      alert(
+                        "Inquiry preview only. Add resident verification and a secure messaging feature before launch.",
+                      )
+                    }
+                  >
+                    Contact business <ArrowUpRight size={17} aria-hidden="true" />
+                  </button>
+                </div>
+              </section>
+            </div>
+          ))}
+        </div>
+        {rows.length === 0 && (
+          <div className="business-directory-empty">
+            <strong>No businesses found</strong>
+            <p>Try another search term or choose a different category.</p>
+          </div>
+        )}
+
+        <div className="info-banner">
+          <Filter size={20} aria-hidden="true" />
+          <div>
+            <strong>Business owners can manage their listings</strong>
+            <p>
+              The production version should let verified household members create
+              a business profile, upload images to Vercel Blob, and link the
+              business to one or more approved household records.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <style jsx global>{`
+        .business-directory-page .business-directory-list {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 22px;
+        }
+
+        .business-directory-page .business-directory-group {
+          min-width: 0;
+        }
+
+        .business-directory-page .business-directory-item {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+          align-items: stretch;
+          min-width: 0;
+          overflow: hidden;
+          background: #fff;
+          border: 1px solid #e1e9df;
+          border-radius: 22px;
+          box-shadow: 0 8px 24px rgba(25, 50, 32, 0.035);
+        }
+
+        .business-directory-page .business-directory-image {
+          width: 100%;
+          aspect-ratio: 3 / 4;
+          min-width: 0;
+          align-self: start;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          background: linear-gradient(135deg, #f3e8d9 0%, #dce9d9 100%);
+        }
+
+        .business-directory-page .business-directory-image span {
+          display: block;
+          font-size: clamp(56px, 7vw, 96px);
+          line-height: 1;
+          overflow-wrap: normal;
+          word-break: normal;
+        }
+
+        .business-directory-page .business-directory-main {
+          min-width: 0;
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .business-directory-page .business-directory-heading {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+          min-width: 0;
+          margin-bottom: 14px;
+        }
+
+        .business-directory-page .business-directory-heading h2 {
+          margin: 0;
+          font-size: 20px;
+          line-height: 1.3;
+          letter-spacing: -0.035em;
+          overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-category {
+          display: inline-flex;
+          align-items: center;
+          max-width: 100%;
+          padding: 6px 11px;
+          border-radius: 999px;
+          background: #edf4ec;
+          color: #4a6d51;
+          font-size: 12px;
+          font-weight: 700;
+          line-height: 1.35;
+          overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-location {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+          color: #738176;
+          font-size: 14px;
+          line-height: 1.45;
+          overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-location svg {
+          flex: 0 0 auto;
+        }
+
+        .business-directory-page .business-directory-divider {
+          height: 1px;
+          width: 100%;
+          background: #e8eee7;
+          margin: 14px 0;
+        }
+
+        .business-directory-page .business-directory-status {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin: 0 0 8px;
+          font-size: 14px;
+          font-weight: 700;
+          line-height: 1.4;
+        }
+
+        .business-directory-page .business-directory-status.status-open {
+          color: #328554;
+        }
+
+        .business-directory-page .business-directory-status.status-variable {
+          color: #a47a20;
+        }
+
+        .business-directory-page .business-directory-hours {
+          margin: 0;
+          color: #89958b;
+          font-size: 13px;
+          line-height: 1.45;
+          overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-extra {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 16px;
+          margin-top: 10px;
+          padding: 18px 20px;
+          border: 1px solid #e1e9df;
+          border-radius: 18px;
+          background: #fff;
+          box-shadow: 0 8px 24px rgba(25, 50, 32, 0.025);
+          min-width: 0;
+        }
+
+        .business-directory-page .business-directory-description {
+          margin: 0;
+          color: #68776d;
+          font-size: 14px;
+          line-height: 1.55;
+          overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-actions {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 10px;
+          align-items: stretch;
+        }
+
+        .business-directory-page .business-directory-actions .secondary-button,
+        .business-directory-page .business-directory-actions .primary-button {
+          min-width: 0;
+          min-height: 46px;
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          padding: 11px 12px;
+          border-radius: 12px;
+          text-align: center;
+          font-size: 13px;
+          font-weight: 700;
+          line-height: 1.3;
+          overflow-wrap: anywhere;
+        }
+
+        .business-directory-page .business-directory-actions .secondary-button {
+          border: 1px solid #dbe6da;
+          background: #fff;
+          color: #315c3c;
+        }
+
+        .business-directory-page .business-directory-actions .secondary-button:hover {
+          background: #f5f9f4;
+          border-color: #bfd2bf;
+        }
+
+        .business-directory-page .business-directory-actions .primary-button {
+          border: 0;
+          background: #244b37;
+          color: #fff;
+          cursor: pointer;
+        }
+
+        .business-directory-page .business-directory-actions .primary-button:hover {
+          background: #193a29;
+        }
+
+        .business-directory-page .business-directory-empty {
+          padding: 28px;
+          border: 1px solid #e1e9df;
+          border-radius: 16px;
+          background: #fff;
+          text-align: center;
+          color: #68776d;
+        }
+
+        .business-directory-page .business-directory-empty strong {
+          color: #17251e;
+        }
+
+        .business-directory-page .business-directory-empty p {
+          margin: 6px 0 0;
+        }
+
+        @media (max-width: 560px) {
+          .business-directory-page .business-directory-item {
+            grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+          }
+
+          .business-directory-page .business-directory-main {
+            padding: 15px 13px;
+          }
+
+          .business-directory-page .business-directory-heading h2 {
+            font-size: 17px;
+          }
+
+          .business-directory-page .business-directory-category {
+            padding: 5px 9px;
+            font-size: 11px;
+          }
+
+          .business-directory-page .business-directory-location {
+            font-size: 12px;
+            gap: 6px;
+          }
+
+          .business-directory-page .business-directory-extra {
+            padding: 15px;
+            gap: 13px;
+          }
+
+          .business-directory-page .business-directory-actions {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+          }
+
+          .business-directory-page .business-directory-actions .secondary-button,
+          .business-directory-page .business-directory-actions .primary-button {
+            padding: 10px 7px;
+            gap: 5px;
+            font-size: 11px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .business-directory-page .business-directory-item {
+            grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+          }
+
+          .business-directory-page .business-directory-main {
+            padding: 12px 10px;
+          }
+
+          .business-directory-page .business-directory-heading h2 {
+            font-size: 15px;
+          }
+
+          .business-directory-page .business-directory-actions .secondary-button,
+          .business-directory-page .business-directory-actions .primary-button {
+            font-size: 10px;
+          }
+        }
+      `}</style>
+    </SiteShell>
+  );
 }
