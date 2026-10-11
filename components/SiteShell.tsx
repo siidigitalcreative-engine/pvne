@@ -289,7 +289,14 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         .site-header .account-menu-trigger:hover { color: #245c38; }
         .site-header .account-menu-trigger:focus-visible { outline: 2px solid #9bb9a0; outline-offset: 3px; border-radius: 4px; }
       `}</style>
-      <main>{children}</main>
+      <main>
+        {(() => {
+          const publicPath = pathname === "/login" || pathname === "/signup";
+          if (publicPath || (authLoaded && currentUser && currentUser.id)) return children;
+          if (!authLoaded) return <section className="page-container" style={{ minHeight: "45vh", display: "grid", placeItems: "center", paddingTop: 56, paddingBottom: 56 }}><div style={{ textAlign: "center", maxWidth: 420 }}><p style={{ color: "#607366" }}>Checking your sign-in status…</p></div></section>;
+          return <section className="page-container" style={{ minHeight: "45vh", display: "grid", placeItems: "center", paddingTop: 56, paddingBottom: 56 }}><div style={{ maxWidth: 480, width: "100%", padding: 28, background: "#fff", border: "1px solid #dce7dc", borderRadius: 20, textAlign: "center", boxShadow: "0 12px 34px rgba(24,54,34,.06)" }}><div style={{ fontSize: 34, marginBottom: 10 }}>🏡</div><h1 style={{ fontSize: 25, color: "#244d32", margin: "0 0 10px" }}>Welcome to the PVNE community</h1><p style={{ color: "#68776b", lineHeight: 1.65, margin: "0 0 22px" }}>Sign in or create an account to view village announcements, the directory, local businesses, community posts, and the village map.</p><div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}><Link href={`/login?next=${encodeURIComponent(pathname)}`} className="header-login" style={{ display: "inline-flex", padding: "12px 20px", borderRadius: 10, background: "#fff", border: "1px solid #d6e2d6", color: "#244d32", textDecoration: "none", fontWeight: 700 }}>Log in</Link><Link href={`/signup?next=${encodeURIComponent(pathname)}`} className="header-signup" style={{ display: "inline-flex", padding: "12px 20px", borderRadius: 10, background: "#245c38", color: "#fff", textDecoration: "none", fontWeight: 700 }}>Sign up</Link></div></div></section>;
+        })()}
+      </main>
 
       <footer className="site-footer">
         <div className="footer-brand">
