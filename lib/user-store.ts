@@ -1,6 +1,6 @@
 import "server-only";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
-import { list, put } from "@vercel/blob";
+import { get, list, put } from "@vercel/blob";
 
 export type UserRole = "admin" | "member";
 export type StoredUser = {
@@ -43,12 +43,13 @@ function decrypt<T>(value: string): T {
 
 export async function readUsers(): Promise<StoredUser[]> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) throw new Error("BLOB_READ_WRITE_TOKEN is not configured.");
-  const result = await list({ prefix: USERS_PATH, limit: 10 });
+  const result = await list({ prefix: USERS_PATH, limit: 10, access: "private" });
   const blob = result.blobs.find((item) => item.pathname === USERS_PATH);
   if (!blob) return [];
-  const response = await fetch(blob.url, { cache: "no-store" });
-  if (!response.ok) throw new Error("Could not read the account registry from Blob.");
-  const users = decrypt<unknown>(await response.text());
+  const privateBlob = await get(USERS_PATH, { access: "private" });
+  if (!privateBlob || privateBlob.statusCode !== 200) throw new Error("Could not read the account registry from private Blob storage.");
+  const responseText = await new Response(privateBlob.stream).text();
+  const users = decrypt<unknown>(responseText);
   if (!Array.isArray(users)) throw new Error("Stored account registry is invalid.");
   return users as StoredUser[];
 }
@@ -56,7 +57,7 @@ export async function readUsers(): Promise<StoredUser[]> {
 export async function writeUsers(users: StoredUser[]): Promise<void> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) throw new Error("BLOB_READ_WRITE_TOKEN is not configured.");
   await put(USERS_PATH, encrypt(users), {
-    access: "public",
+    access: "private",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
