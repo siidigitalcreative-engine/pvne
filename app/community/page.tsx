@@ -36,23 +36,23 @@ export default function CommunityPage() {
     gap: "4px",
     flex: "0 0 auto",
     whiteSpace: "nowrap",
-    fontSize: "inherit",
+    fontSize: "14px",
     lineHeight: "1.2",
     verticalAlign: "middle",
   }}
 >
   <Clock3
-    size={12}
+    size={14}
     aria-hidden="true"
     style={{
-      width: "12px",
-      height: "12px",
-      flex: "0 0 12px",
+      width: "14px",
+      height: "14px",
+      flex: "0 0 14px",
       display: "block",
       strokeWidth: 1.8,
     }}
   />
-  <span style={{ fontSize: "inherit", lineHeight: "inherit", display: "inline-block" }}>
+  <span style={{ fontSize: "14px", lineHeight: "1.2", display: "inline-block", fontWeight: 400 }}>
     {ago(p.createdAt)}
   </span>
 </span><span className="post-category-chip">{p.category}</span></div><button className="post-title-button" onClick={()=>{setSelected(p.id);setNotice("");}}><h3>{p.title}</h3></button><p className="community-post-excerpt">{p.body}</p>{p.location && <span className="post-location-label">⌖ {p.location}</span>}<div className="community-post-actions"><button onClick={()=>{setSelected(p.id);setNotice("");}}><MessageCircle size={15}/>{p.comments} {p.comments === 1 ? "comment" : "comments"}</button><button onClick={()=>action({action:"like",postId:p.id,liked:false})}><Heart size={15}/>{p.likes} helpful</button><span className="post-action-spacer"/><button className="open-thread-button" onClick={()=>{setSelected(p.id);setNotice("");}}>Join discussion <ArrowUpRight size={14}/></button></div><div className="post-chat-link"><span><MessageCircle size={14}/> Want a quicker conversation?</span><Link href={`/community/chat?topic=${encodeURIComponent(p.category)}`}>Open {p.category} chat <ArrowUpRight size={13}/></Link></div></div></article>)}</div> : <div className="empty-state"><Search size={26}/><h3>No matching discussions</h3><p>Try another search or select a different topic.</p><button className="secondary-button" onClick={()=>{setQ("");setTopic("All topics");}}>Clear filters</button></div>}
