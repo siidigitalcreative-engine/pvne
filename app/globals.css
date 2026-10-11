@@ -782,3 +782,153 @@ img,svg,video,canvas{max-width:100%;height:auto}
     min-height: 138px;
   }
 }
+
+/* =========================================================
+   PVNE MOBILE HERO REPAIR — FULL STYLESHEET OVERRIDE
+   Keeps the existing site design and fixes the narrow-screen hero.
+   ========================================================= */
+@media (max-width: 840px) {
+  .hero {
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+
+  .hero-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+    gap: 22px !important;
+    align-items: start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
+
+  .hero-copy {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 18px !important;
+  }
+
+  .hero-copy > .eyebrow,
+  .hero-copy > h1,
+  .hero-copy > .lede,
+  .hero-copy > .cta-row,
+  .hero-copy > .hero-image-showcase,
+  .hero-grid > .stack-card {
+    grid-area: auto !important;
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 9vw, 48px) !important;
+    line-height: 1.05 !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .hero .lede,
+  .hero .hero-content > p {
+    max-width: 100% !important;
+    line-height: 1.5 !important;
+  }
+
+  .hero-search-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .hero-search {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 60px !important;
+    padding: 7px 8px 7px 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-search input {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    font-size: 13px !important;
+  }
+
+  .hero-search button {
+    flex: 0 0 auto !important;
+    min-height: 44px !important;
+    padding-inline: 12px !important;
+    white-space: nowrap !important;
+  }
+
+  .hero-side-card {
+    position: static !important;
+    inset: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 14px !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-side-card > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .hero-image-showcase {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-content {
+    width: calc(100% - 28px) !important;
+    padding-block: 28px 24px !important;
+  }
+
+  .hero h1 {
+    font-size: 35px !important;
+  }
+
+  .hero-search {
+    gap: 6px !important;
+    padding-left: 9px !important;
+  }
+
+  .hero-search button {
+    padding-inline: 9px !important;
+    font-size: 12px !important;
+  }
+}
