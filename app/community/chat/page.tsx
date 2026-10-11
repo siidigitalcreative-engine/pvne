@@ -1,6 +1,6 @@
 "use client";
-import { FormEvent, useState } from "react";
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import { ArrowLeft, Hash, MessageCircle, Send, ShieldCheck } from "lucide-react";
 import { SiteShell } from "@/components/SiteShell";
