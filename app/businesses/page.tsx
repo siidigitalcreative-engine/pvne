@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -10,20 +10,42 @@ import {
   Filter,
 } from "lucide-react";
 import { SiteShell } from "@/components/SiteShell";
-import { seedBusinesses } from "@/lib/data";
+type Business = { id: string; name: string; category: string; blockLot: string; description: string; emoji: string; status: string; hours: string };
+
 
 export default function BusinessesPage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("All categories");
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [loadError, setLoadError] = useState("");
 
-  const categories = [
-    "All categories",
-    ...Array.from(new Set(seedBusinesses.map((business) => business.category))),
-  ];
+  useEffect(() => {
+    let cancelled = false;
+    let fetching = false;
+    const refresh = async () => {
+      if (fetching) return;
+      fetching = true;
+      try {
+        const response = await fetch("/api/village-data", { cache: "no-store" });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not load business listings.");
+        if (!cancelled) {
+          setBusinesses(Array.isArray(data.businesses) ? data.businesses : []);
+          setLoadError("");
+        }
+      } catch { if (!cancelled) setLoadError("Business listings could not be refreshed. Please try again shortly."); }
+      finally { fetching = false; }
+    };
+    void refresh();
+    const timer = window.setInterval(refresh, 5000);
+    return () => { cancelled = true; window.clearInterval(timer); };
+  }, []);
+
+  const categories = ["All categories", ...Array.from(new Set(businesses.map((business) => business.category)))];
 
   const rows = useMemo(
     () =>
-      seedBusinesses.filter((business) => {
+      businesses.filter((business) => {
         const matchesSearch = `${business.name} ${business.category} ${business.blockLot} ${business.description}`
           .toLowerCase()
           .includes(q.toLowerCase());
@@ -33,7 +55,7 @@ export default function BusinessesPage() {
 
         return matchesSearch && matchesCategory;
       }),
-    [q, category],
+    [businesses, q, category],
   );
 
   return (
@@ -74,9 +96,10 @@ export default function BusinessesPage() {
         </div>
 
         <div className="result-summary">
-          {rows.length} sample businesses{" "}
-          <span>· Listings shown are illustrative</span>
+          {rows.length} registered businesses
         </div>
+
+        {loadError && <div className="info-banner" role="status"><Store size={20} /><div><strong>Listings unavailable</strong><p>{loadError}</p></div></div>}
 
         <div className="business-list-grid">
           {rows.map((business) => (
@@ -152,11 +175,7 @@ export default function BusinessesPage() {
           <Filter size={20} aria-hidden="true" />
           <div>
             <strong>Business owners can manage their listings</strong>
-            <p>
-              The production version should let verified household members
-              create a business profile, upload full business photos, and link
-              the business to one or more approved household records.
-            </p>
+            <p>Listings shown here come from the shared village records. New or updated records appear automatically after they are saved.</p>
           </div>
         </div>
       </div>
