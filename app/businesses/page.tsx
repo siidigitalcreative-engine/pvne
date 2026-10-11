@@ -189,7 +189,7 @@ export default function BusinessesPage() {
           min-width: 0;
           min-height: 220px;
           overflow: hidden;
-          aspect-ratio: 4 / 3;
+          aspect-ratio: 3 / 4;
           background: linear-gradient(135deg, #f3e9d9, #dce9da);
         }
 
@@ -322,7 +322,7 @@ export default function BusinessesPage() {
           .business-list-art {
             min-height: 190px;
             height: 100%;
-            aspect-ratio: auto;
+            aspect-ratio: 3 / 4;
             border-radius: 0;
           }
 
