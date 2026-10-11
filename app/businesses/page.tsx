@@ -171,7 +171,7 @@ export default function BusinessesPage() {
         /* Horizontal card: image on the left, all details on the right. */
         .business-list-card {
           display: grid;
-          grid-template-columns: minmax(180px, 34%) minmax(0, 1fr);
+          grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
           align-items: stretch;
           min-width: 0;
           overflow: hidden;
@@ -187,7 +187,10 @@ export default function BusinessesPage() {
           align-items: center;
           justify-content: center;
           min-width: 0;
-          min-height: 220px;
+          min-height: 0;
+          width: 100%;
+          max-width: 100%;
+          align-self: start;
           overflow: hidden;
           aspect-ratio: 3 / 4;
           background: linear-gradient(135deg, #f3e9d9, #dce9da);
@@ -305,7 +308,7 @@ export default function BusinessesPage() {
 
         @media (min-width: 1100px) {
           .business-list-card {
-            grid-template-columns: minmax(240px, 32%) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
           }
 
           .business-list-art {
@@ -315,13 +318,16 @@ export default function BusinessesPage() {
 
         @media (max-width: 640px) {
           .business-list-card {
-            grid-template-columns: minmax(112px, 36%) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
             border-radius: 18px;
           }
 
           .business-list-art {
-            min-height: 190px;
-            height: 100%;
+            min-height: 0;
+            height: auto;
+            width: 100%;
+            max-width: 100%;
+            align-self: start;
             aspect-ratio: 3 / 4;
             border-radius: 0;
           }
@@ -386,7 +392,7 @@ export default function BusinessesPage() {
 
         @media (max-width: 360px) {
           .business-list-card {
-            grid-template-columns: minmax(100px, 34%) minmax(0, 1fr);
+            grid-template-columns: minmax(0, 30%) minmax(0, 1fr);
           }
 
           .business-list-body {
