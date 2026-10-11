@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Bell, Building2, CalendarDays, House, Map, Menu, MessageCircle, Search, Store, Wrench } from "lucide-react";
 
