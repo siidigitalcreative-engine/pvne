@@ -1,74 +1,49 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SiteShell } from "@/components/SiteShell";
-import { House, Users, MapPinned } from "lucide-react";
+import { Store, MapPinned, ExternalLink } from "lucide-react";
+import { seedBusinesses } from "@/lib/data";
 
-const options = [
-  ["owner", "Homeowner (HO)"], ["co_owner", "Co-owner"], ["spouse", "Spouse of Homeowner"],
-  ["domestic_partner", "Domestic Partner of Homeowner"], ["family_member", "Immediate Family Member of Homeowner"],
-  ["authorized_representative", "Authorized Household Representative"], ["tenant", "Tenant / Lessee"], ["other", "Other"],
-];
-const labels: Record<string, string> = Object.fromEntries(options);
-type Resident = { id: string; name: string; ownerRelationship: string; ownerRelationshipOther?: string };
-type HouseData = { blockNumber: string; lotNumber: string; ownerRelationship: string; ownerRelationshipOther: string };
-export default function MyHousePage() {
-  const [house, setHouse] = useState<HouseData>({ blockNumber: "", lotNumber: "", ownerRelationship: "", ownerRelationshipOther: "" });
-  const [residents, setResidents] = useState<Resident[]>([]);
-  const [busy, setBusy] = useState(false);
+type Business = { id: string; name: string; category: string; blockLot: string; description: string; hours: string; status: string; emoji: string };
+type Profile = { blockNumber?: string; lotNumber?: string };
+function normalize(value: string) { return value.toLowerCase().replace(/[^a-z0-9]/g, ""); }
+export default function MyBusinessPage() {
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
 
-  async function load() {
-    const r = await fetch("/api/account/house", { cache: "no-store" }); const d = await r.json();
-    if (!r.ok) throw new Error(d.error || "Could not load your house.");
-    setHouse(d.house); setResidents(Array.isArray(d.household) ? d.household : []);
-  }
-  useEffect(() => { load().catch(e => setError(e.message || "Could not load your house.")); }, []);
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/account/house", { cache: "no-store" }).then(async r => { const d = await r.json(); if (!r.ok) throw new Error(d.error || "Please log in."); return d.house as Profile; }),
+      Promise.resolve(seedBusinesses as Business[]),
+    ]).then(([house, list]) => {
+      setProfile(house);
+      const key = normalize(`Blk ${house.blockNumber} Lot ${house.lotNumber}`);
+      setBusinesses(key && house.blockNumber && house.lotNumber ? list.filter(b => normalize(b.blockLot) === key) : []);
+    }).catch(e => setError(e.message || "Could not load your business information."))
+      .finally(() => setLoading(false));
+  }, []);
 
-  async function submit(e: FormEvent) {
-    e.preventDefault(); setBusy(true); setError(""); setMessage("");
-    try {
-      const r = await fetch("/api/account/house", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(house) });
-      const d = await r.json(); if (!r.ok) throw new Error(d.error || "Could not save details.");
-      await load(); setMessage("Your house details have been saved and will be reflected in the House Directory.");
-    } catch (e) { setError(e instanceof Error ? e.message : "Could not save details."); }
-    finally { setBusy(false); }
-  }
-
-  return <SiteShell><div className="page-container">
-    <div className="page-hero compact"><span className="section-kicker">YOUR HOUSEHOLD</span><h1>My House</h1><p>Manage your Block and Lot details and see accounts registered to the same address.</p></div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,320px),1fr))", gap: 22, alignItems: "start", marginBottom: 40 }}>
-      <section className="account-panel" style={{ padding: 24, border: "1px solid #e0e8df", borderRadius: 18, background: "#fff" }}>
-        <h2 style={{ marginTop: 0, display: "flex", gap: 10, alignItems: "center" }}><House size={22}/> House details</h2>
-        <form onSubmit={submit} className="auth-form" style={{ display: "grid", gap: 15 }}>
-          <div className="house-fields-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <label>Block number<input required maxLength={20} value={house.blockNumber} onChange={e => setHouse({ ...house, blockNumber: e.target.value })} placeholder="e.g. 12" /></label>
-            <label>Lot number<input required maxLength={20} value={house.lotNumber} onChange={e => setHouse({ ...house, lotNumber: e.target.value })} placeholder="e.g. 08" /></label>
-          </div>
-          <label>Relationship to Homeowner<select required value={house.ownerRelationship} onChange={e => setHouse({ ...house, ownerRelationship: e.target.value })}><option value="">Select relationship</option>{options.map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-          {house.ownerRelationship === "other" && <label>Please specify<input required maxLength={100} value={house.ownerRelationshipOther} onChange={e => setHouse({ ...house, ownerRelationshipOther: e.target.value })} placeholder="Describe your relationship" /></label>}
-          {message && <p role="status" style={{ color: "#23653d", margin: 0 }}>{message}</p>}
-          {error && <p role="alert" style={{ color: "#a13d36", margin: 0 }}>{error}</p>}
-          <button className="primary-button" disabled={busy} type="submit">{busy ? "Saving…" : "Save house details"}</button>
-        </form>
-      </section>
-      <section className="account-panel" style={{ padding: 24, border: "1px solid #e0e8df", borderRadius: 18, background: "#fff" }}>
-        <h2 style={{ marginTop: 0, display: "flex", gap: 10, alignItems: "center" }}><Users size={22}/> Household members</h2>
-        <p style={{ color: "#68766c", fontSize: 13 }}>Active accounts registered to the same Block and Lot appear here.</p>
-        {residents.length ? residents.map(r => <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #edf0ec" }}><span className="brand-mark"><Users size={17}/></span><div><strong>{r.name}</strong><div style={{ fontSize: 12, color: "#68766c" }}>{r.ownerRelationship === "other" ? r.ownerRelationshipOther || "Other" : labels[r.ownerRelationship] || "Resident"}</div></div></div>) : <p className="no-business">No other registered accounts found for this Block and Lot yet.</p>}
-        <Link href="/directory" className="house-card-link" style={{ marginTop: 18 }}>Open House Directory <MapPinned size={16}/></Link>
-      </section>
-    </div>
+  return <SiteShell><div className="page-container my-business-page">
+    <div className="page-hero compact"><span className="section-kicker">LOCAL ENTERPRISE</span><h1>My Business</h1><p>View business listings associated with your registered Block and Lot.</p></div>
+    {loading && <p className="no-business">Loading your business listings…</p>}
+    {error && <div className="info-banner"><div><strong>Business listings unavailable</strong><p>{error} <Link href="/login">Log in</Link></p></div></div>}
+    {!loading && !error && <>
+      {profile?.blockNumber && profile?.lotNumber ? <p className="result-summary">Your address: Block {profile.blockNumber}, Lot {profile.lotNumber}</p> : <div className="info-banner"><div><strong>Add your house details first</strong><p>Save your Block and Lot under <Link href="/my-house">My House</Link> to find business listings associated with your address.</p></div></div>}
+      {businesses.length ? <div className="house-grid">{businesses.map(b => <article className="house-card" key={b.id}><div className="house-card-content"><div style={{ fontSize: 30 }}>{b.emoji}</div><div className="house-title"><div><h2>{b.name}</h2><p>{b.category}</p></div><span className="has-business">{b.status}</span></div><div className="house-meta"><span><MapPinned size={14}/>{b.blockLot}</span></div><p>{b.description}</p><p style={{ color: "#68766c", fontSize: 13 }}>Hours: {b.hours}</p><Link href="/businesses" className="house-card-link">View business directory <ExternalLink size={15}/></Link></div></article>)}</div> : !error && <div className="info-banner"><Store size={20}/><div><strong>No business listings found for this address</strong><p>Business listings are currently read from the village directory. New business registration and editing are not available on this page yet.</p><Link href="/businesses">Browse all businesses</Link></div></div>}
+    </>}
     <style jsx>{`
-      .account-panel { box-shadow: 0 12px 34px rgba(32, 58, 37, .045); min-width: 0; }
-      .auth-form label { display: grid; gap: 7px; color: #33483a; font-size: 12px; font-weight: 750; }
-      .auth-form input, .auth-form select { width: 100%; min-height: 45px; padding: 11px 13px; border: 1px solid #dce5dc; border-radius: 10px; background: #fff; color: #203628; font: inherit; font-size: 13px; outline: none; }
-      .auth-form input:focus, .auth-form select:focus { border-color: #6f9a73; box-shadow: 0 0 0 3px rgba(111,154,115,.13); }
+      .my-business-page .info-banner { border-radius: 13px; }
+      .my-business-page .house-card { border-radius: 18px; border-color: #e0e8df; box-shadow: 0 12px 34px rgba(32, 58, 37, .045); }
+      .my-business-page .house-card-content { padding: 20px; }
+      .my-business-page .house-card-content > p { font-size: 13px; line-height: 1.6; color: #68766c; }
+      .my-business-page .house-card-link { font-size: 12px; }
       @media (max-width: 620px) {
-        .account-panel { padding: 20px !important; }
-        .house-fields-row { grid-template-columns: minmax(0, 1fr) !important; }
+        .my-business-page .house-grid { grid-template-columns: minmax(0, 1fr); }
+        .my-business-page .house-card-content { padding: 16px; }
       }
     `}</style>
   </div></SiteShell>;
