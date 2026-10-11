@@ -27,6 +27,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [blockNumber, setBlockNumber] = useState("");
   const [lotNumber, setLotNumber] = useState("");
   const [streetName, setStreetName] = useState("");
+  const [colorScheme, setColorScheme] = useState("");
   const [ownerRelationship, setOwnerRelationship] = useState("");
   const [ownerRelationshipOther, setOwnerRelationshipOther] = useState("");
   const [busy, setBusy] = useState(false);
@@ -44,7 +45,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           name,
           email,
           password,
-          ...(isSignup ? { blockNumber, lotNumber, streetName, ownerRelationship, ownerRelationshipOther } : {}),
+          ...(isSignup ? { blockNumber, lotNumber, streetName, colorScheme, ownerRelationship, ownerRelationshipOther } : {}),
         }),
       });
       const result = await response.json();
@@ -91,6 +92,22 @@ export default function AuthForm({ mode }: AuthFormProps) {
               <label>
                 Street name
                 <input value={streetName} onChange={(event) => setStreetName(event.target.value)} maxLength={100} placeholder="e.g. Sampaguita Street" autoComplete="street-address" />
+              </label>
+
+              <label>
+                House color
+                <select value={colorScheme} onChange={(event) => setColorScheme(event.target.value)} required>
+                  <option value="">Select house color</option>
+                  <option value="Green">Green</option>
+                  <option value="Blue">Blue</option>
+                  <option value="Yellow">Yellow</option>
+                  <option value="Pink">Pink</option>
+                  <option value="Purple">Purple</option>
+                  <option value="Brown">Brown</option>
+                  <option value="Gray">Gray</option>
+                  <option value="White">White</option>
+                  <option value="Other">Other</option>
+                </select>
               </label>
 
               <label>
