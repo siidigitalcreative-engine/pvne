@@ -31,6 +31,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [lotNumber, setLotNumber] = useState("");
   const [ownerRelationship, setOwnerRelationship] = useState("");
   const [ownerRelationshipOther, setOwnerRelationshipOther] = useState("");
+  const [colorScheme, setColorScheme] = useState<"Turquoise" | "Aubergine" | "Santan">("Turquoise");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -51,7 +52,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           name,
           email,
           password,
-          ...(isSignup ? { blockNumber, lotNumber, ownerRelationship, ownerRelationshipOther } : {}),
+          ...(isSignup ? { blockNumber, lotNumber, ownerRelationship, ownerRelationshipOther, colorScheme } : {}),
         }),
       });
       const result = await response.json();
@@ -94,6 +95,24 @@ export default function AuthForm({ mode }: AuthFormProps) {
                   <input value={lotNumber} onChange={(event) => setLotNumber(event.target.value)} maxLength={20} required placeholder="e.g. 08" autoComplete="off" />
                 </label>
               </div>
+
+              <label>
+                House color
+                <select
+                  value={colorScheme}
+                  onChange={(event) => setColorScheme(event.target.value as "Turquoise" | "Aubergine" | "Santan")}
+                  required
+                  style={{ display: "block", width: "100%", minHeight: 48, height: 48, boxSizing: "border-box", padding: "12px 14px", fontSize: 14, fontWeight: 400, lineHeight: 1.4 }}
+                >
+                  <option value="Turquoise">Turquoise</option>
+                  <option value="Aubergine">Aubergine</option>
+                  <option value="Santan">Santan</option>
+                </select>
+                <small style={{ display: "flex", alignItems: "center", gap: 8, color: "#64766a", fontWeight: 400 }}>
+                  <span style={{ width: 14, height: 14, borderRadius: 4, background: colorScheme === "Turquoise" ? "#9bd9df" : colorScheme === "Aubergine" ? "#9a91b8" : "#a9d69e", border: "1px solid #dce5dc" }} />
+                  This color will be used for your house in the village directory and map.
+                </small>
+              </label>
 
               <label>
                 Relationship to homeowner
