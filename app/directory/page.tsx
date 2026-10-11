@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, Store, MapPinned, ChevronRight, House, Filter, Users } from "lucide-react";
 import { SiteShell } from "@/components/SiteShell";
-import { seedHouseholds, seedBusinesses } from "@/lib/data";
+type Household = { id: string; block: string; lot: string; street: string; colorScheme: string; businesses: string[]; hasBusiness: boolean };
+type Business = { id: string; name: string; category: string; emoji: string };
+
 
 type Resident = {
   id: string;
@@ -43,6 +45,32 @@ export default function DirectoryPage() {
   const [residents, setResidents] = useState<Resident[]>([]);
   const [residentsLoaded, setResidentsLoaded] = useState(false);
   const [residentsMessage, setResidentsMessage] = useState("");
+  const [households, setHouseholds] = useState<Household[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [directoryMessage, setDirectoryMessage] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    let fetching = false;
+    const refresh = async () => {
+      if (fetching) return;
+      fetching = true;
+      try {
+        const response = await fetch("/api/village-data", { cache: "no-store" });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not load the house directory.");
+        if (!cancelled) {
+          setHouseholds(Array.isArray(data.households) ? data.households : []);
+          setBusinesses(Array.isArray(data.businesses) ? data.businesses : []);
+          setDirectoryMessage("");
+        }
+      } catch { if (!cancelled) setDirectoryMessage("The house directory could not be refreshed. Please try again shortly."); }
+      finally { fetching = false; }
+    };
+    void refresh();
+    const timer = window.setInterval(refresh, 5000);
+    return () => { cancelled = true; window.clearInterval(timer); };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,18 +95,18 @@ export default function DirectoryPage() {
     return () => { cancelled = true; };
   }, []);
 
-  const rows = useMemo(() => seedHouseholds.filter((h) => {
+  const rows = useMemo(() => households.filter((h) => {
     const linkedResidents = residents.filter((r) =>
       normalizePart(r.blockNumber) === normalizePart(h.block) &&
       normalizePart(r.lotNumber) === normalizePart(h.lot)
     );
     const businessNames = h.businesses
-      .map((id) => seedBusinesses.find((b) => b.id === id)?.name || "")
+      .map((id) => businesses.find((b) => b.id === id)?.name || "")
       .join(" ");
     const residentNames = linkedResidents.map((r) => `${r.name} ${relationshipLabel(r)}`).join(" ");
     const text = `block ${h.block} lot ${h.lot} ${h.street} ${h.colorScheme} ${businessNames} ${residentNames}`.toLowerCase();
     return text.includes(q.toLowerCase()) && (!businessOnly || h.hasBusiness);
-  }), [q, businessOnly, residents]);
+  }), [households, businesses, q, businessOnly, residents]);
 
   return (
     <SiteShell>
@@ -99,7 +127,8 @@ export default function DirectoryPage() {
           </label>
           <Link href="/map" className="secondary-button"><MapPinned size={16} /> View map</Link>
         </div>
-        <div className="result-summary">{rows.length} house listings <span>· Resident details shown to signed-in users</span></div>
+        <div className="result-summary">{rows.length} registered house listings <span>· Resident details shown to signed-in users</span></div>
+        {directoryMessage && <div className="info-banner" role="status"><House size={20} /><div><strong>Directory unavailable</strong><p>{directoryMessage}</p></div></div>}
 
         {!residentsLoaded && <p className="no-business">Loading registered residents…</p>}
         {residentsLoaded && residentsMessage && (
@@ -143,7 +172,7 @@ export default function DirectoryPage() {
                     <div className="linked-businesses">
                       <strong>Businesses at this address</strong>
                       {h.businesses.map((id) => {
-                        const b = seedBusinesses.find((item) => item.id === id);
+                        const b = businesses.find((item) => item.id === id);
                         return b ? <Link href="/businesses" key={id}><span>{b.emoji}</span><span><b>{b.name}</b><small>{b.category}</small></span><ChevronRight size={15} /></Link> : null;
                       })}
                     </div>
@@ -154,6 +183,7 @@ export default function DirectoryPage() {
             );
           })}
         </div>
+        {rows.length === 0 && !directoryMessage && <div className="empty-state"><House size={24} /><h2>No registered houses yet</h2><p>Household listings will appear here once they are added by an authorized administrator.</p></div>}
         <div className="info-banner"><Filter size={20} /><div><strong>Resident-managed directory</strong><p>Resident names and property relationships are shown only to signed-in users. Household details and business links should be verified by authorized residents or village administrators.</p></div></div>
       </div>
     </SiteShell>
