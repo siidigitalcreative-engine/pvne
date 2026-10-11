@@ -1007,3 +1007,184 @@ img,svg,video,canvas{max-width:100%;height:auto}
     order: 3 !important;
   }
 }
+
+
+/* =========================================================
+   PVNE FINAL MOBILE HERO + WELCOME CARD FIX
+   Complete stylesheet override. The welcome card/showcase must
+   remain visible and flow below the search/trust line on mobile.
+   ========================================================= */
+@media (max-width: 840px) {
+  .hero {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-bottom: 0 !important;
+  }
+
+  .hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: calc(100% - 36px) !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 30px 0 24px !important;
+    margin-inline: auto !important;
+    gap: 0 !important;
+  }
+
+  .hero-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 18px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .hero-copy {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  /* Do not hide the showcase: it contains the welcome neighbor card
+     in this page version. Remove the old empty panel dimensions. */
+  .hero-image-showcase,
+  .hero-copy > .hero-image-showcase,
+  .hero-grid .hero-image-showcase {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    order: 5 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .hero-side-card,
+  .stack-card,
+  .hero-grid > .stack-card,
+  .hero-grid .stack-card,
+  .hero-content .stack-card,
+  .hero-image-showcase .stack-card,
+  .hero-image-showcase .hero-side-card,
+  [class*="welcome-card"],
+  [class*="welcome-neighbor"],
+  [class*="stack-card"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: static !important;
+    inset: auto !important;
+    float: none !important;
+    order: 6 !important;
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 18px 0 0 !important;
+    padding: 14px 16px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    transform: none !important;
+    background: #fff !important;
+    color: #203128 !important;
+    border: 1px solid rgba(32, 49, 40, .12) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(13, 35, 23, .08) !important;
+  }
+
+  .hero-side-card > *,
+  .stack-card > *,
+  .hero-image-showcase .stack-card > *,
+  .hero-image-showcase .hero-side-card > * {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    color: #203128 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .hero-side-card strong,
+  .stack-card strong,
+  [class*="welcome-card"] strong,
+  [class*="welcome-neighbor"] strong {
+    display: block !important;
+    color: #203128 !important;
+    font-weight: 750 !important;
+  }
+
+  .hero-side-card p,
+  .stack-card p,
+  [class*="welcome-card"] p,
+  [class*="welcome-neighbor"] p {
+    color: #536258 !important;
+    line-height: 1.45 !important;
+    margin: 4px 0 0 !important;
+  }
+
+  .hero-content > p {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .hero-search-wrap,
+  .hero-search {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-search {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .hero-search input {
+    flex: 1 1 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .hero-note {
+    margin-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content {
+    width: calc(100% - 32px) !important;
+    padding-top: 28px !important;
+    padding-bottom: 22px !important;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 9vw, 42px) !important;
+  }
+}
