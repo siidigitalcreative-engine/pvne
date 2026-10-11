@@ -13,9 +13,9 @@ export type StoredUser = {
   createdAt: string;
   blockNumber?: string;
   lotNumber?: string;
+  streetName?: string;
   ownerRelationship?: string;
   ownerRelationshipOther?: string;
-  colorScheme?: "Turquoise" | "Aubergine" | "Santan";
 };
 
 const USERS_PATH = "pvne-private/users.enc.json";
@@ -119,9 +119,9 @@ export function publicUser(user: StoredUser) {
     createdAt: user.createdAt,
     blockNumber: user.blockNumber ?? "",
     lotNumber: user.lotNumber ?? "",
+    streetName: user.streetName ?? "",
     ownerRelationship: user.ownerRelationship ?? "",
     ownerRelationshipOther: user.ownerRelationshipOther ?? "",
-    colorScheme: user.colorScheme ?? "Turquoise",
   };
 }
 
