@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, Bell, Building2, House, Map, Menu, MessageCircle, Search, Store, X } from "lucide-react";
+import { ArrowLeft, Bell, Building2, House, Map, Menu, MessageCircle, Search, Store, UserRound, X } from "lucide-react";
 
 const nav = [
   { href: "/", label: "Home", icon: House },
@@ -35,19 +35,22 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="header-actions">
           <Link href="/directory" className="icon-button" aria-label="Search directory"><Search size={19} /></Link>
           <Link href="/announcements" className="icon-button" aria-label="Notifications"><Bell size={19} /><i /></Link>
-          <Link href="/community" className="avatar" aria-label="PVNE community profile">PVNE</Link>
-          <button className="mobile-menu" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen(v => !v)}>{menuOpen ? <X size={22}/> : <Menu size={22}/>}</button>
+          <div className="header-auth-links">
+            <Link href="/login" className="header-login"><UserRound size={15} />Log in</Link>
+            <Link href="/signup" className="header-signup">Sign up</Link>
+          </div>
+          <button className="mobile-menu" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}>{menuOpen ? <X size={22}/> : <Menu size={22}/>}</button>
         </div>
       </header>
-      {menuOpen && <nav className="mobile-dropdown" aria-label="Expanded navigation">{nav.map(({href,label,icon:Icon})=><Link href={href} key={href} onClick={()=>setMenuOpen(false)}><Icon size={17}/>{label}</Link>)}</nav>}
+      {menuOpen && <nav className="mobile-dropdown" aria-label="Expanded navigation">{nav.map(({href,label,icon:Icon})=><Link href={href} key={href} onClick={()=>setMenuOpen(false)}><Icon size={17}/>{label}</Link>)}<Link href="/login" onClick={()=>setMenuOpen(false)}><UserRound size={17}/>Log in</Link><Link href="/signup" onClick={()=>setMenuOpen(false)}><UserRound size={17}/>Sign up</Link></nav>}
       <nav className="mobile-nav" aria-label="Main navigation">
-        {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined} title={label}><Icon size={18}/><span>{label === "Village Map" ? <>Village<br />Map</> : label}</span></Link>)}
+        {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} aria-current={pathname === href ? "page" : undefined}><Icon size={18}/><span>{label}</span></Link>)}
       </nav>
       <main>{children}</main>
       <footer className="site-footer">
         <div className="footer-brand"><span className="brand-mark">🏡</span><div><strong>Pagsibol Village - Northeastern Naic</strong><p>PVNE · Galak na Umaasenso</p></div></div>
         <p>One village. One community. Built for everyone.</p>
-        <div className="footer-links"><Link href="/map">Explore the map</Link><Link href="/directory">House directory</Link><Link href="/businesses">Local businesses</Link><Link href="/community">Community guidelines</Link></div>
+        <div className="footer-links"><Link href="/map">Explore the map</Link><Link href="/directory">House directory</Link><Link href="/businesses">Local businesses</Link><Link href="/community">Community guidelines</Link><Link href="/login">Log in</Link><Link href="/signup">Sign up</Link></div>
         <small>Community portal concept. Sample listings and posts are illustrative and should be verified before launch.</small>
       </footer>
     </>
