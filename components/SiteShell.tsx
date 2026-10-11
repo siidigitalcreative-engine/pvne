@@ -150,16 +150,35 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <div className="account-menu-wrap" ref={accountMenuRef} style={{ position: "relative" }}>
               <button
                 type="button"
-                className="header-login account-menu-trigger"
+                className="account-menu-trigger"
                 aria-haspopup="menu"
                 aria-expanded={accountMenuOpen}
                 onClick={() => setAccountMenuOpen((open) => !open)}
-                style={{ display: "inline-flex", alignItems: "center", gap: 7, maxWidth: 190 }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  maxWidth: 190,
+                  minHeight: 38,
+                  padding: "8px 4px 8px 8px",
+                  border: "none",
+                  outline: "none",
+                  borderRadius: 8,
+                  background: "transparent",
+                  color: "#34483a",
+                  fontFamily: "inherit",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  lineHeight: 1.2,
+                  cursor: "pointer",
+                  boxShadow: "none",
+                }}
               >
                 <span className="account-name" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {currentUser.name}
                 </span>
-                <ChevronDown size={15} />
+                <ChevronDown size={14} color="#718076" />
               </button>
               {accountMenuOpen && (
                 <div
