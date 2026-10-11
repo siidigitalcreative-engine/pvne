@@ -98,15 +98,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 House color
                 <select value={colorScheme} onChange={(event) => setColorScheme(event.target.value)} required>
                   <option value="">Select house color</option>
-                  <option value="Green">Green</option>
-                  <option value="Blue">Blue</option>
-                  <option value="Yellow">Yellow</option>
-                  <option value="Pink">Pink</option>
-                  <option value="Purple">Purple</option>
-                  <option value="Brown">Brown</option>
-                  <option value="Gray">Gray</option>
-                  <option value="White">White</option>
-                  <option value="Other">Other</option>
+                  <option value="Turquoise">Turquoise (Teal / Yellow)</option>
+                  <option value="Aubergine">Aubergine (Purple / Green)</option>
+                  <option value="Santan">Santan (Light Green / Pink)</option>
                 </select>
               </label>
 
