@@ -2,7 +2,14 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, Store, MapPinned, ArrowUpRight, Filter, Image as ImageIcon } from "lucide-react";
+import {
+  Search,
+  Store,
+  MapPinned,
+  ArrowUpRight,
+  Filter,
+  Image as ImageIcon,
+} from "lucide-react";
 import { SiteShell } from "@/components/SiteShell";
 import { seedBusinesses } from "@/lib/data";
 
@@ -21,6 +28,7 @@ export default function BusinessesPage() {
         const matchesSearch = `${business.name} ${business.category} ${business.blockLot} ${business.description}`
           .toLowerCase()
           .includes(q.toLowerCase());
+
         const matchesCategory =
           category === "All categories" || business.category === category;
 
@@ -75,37 +83,40 @@ export default function BusinessesPage() {
           {rows.map((business) => (
             <article className="business-list-card" key={business.id}>
               <div
-                className="business-list-art business-list-art-full"
+                className="business-list-art"
                 aria-label={`${business.name} image area`}
               >
-                <span aria-hidden="true">{business.emoji}</span>
+                <span className="business-illustration" aria-hidden="true">
+                  {business.emoji}
+                </span>
                 <div className="business-image-hint">
-                  <ImageIcon size={14} aria-hidden="true" />
+                  <ImageIcon size={16} aria-hidden="true" />
                   <span>Business image</span>
                 </div>
               </div>
 
               <div className="business-list-body">
-                <div className="business-title-row">
-                  <h2>{business.name}</h2>
-                  <span
-                    className={
-                      business.status === "Open"
-                        ? "status-open"
-                        : "status-variable"
-                    }
-                  >
-                    ● {business.status}
-                  </span>
-                </div>
+                <h2 className="business-name">{business.name}</h2>
 
-                <span className="business-category-pill">{business.category}</span>
+                <span className="business-category-pill">
+                  {business.category}
+                </span>
+
+                <span
+                  className={
+                    business.status === "Open"
+                      ? "business-status status-open"
+                      : "business-status status-variable"
+                  }
+                >
+                  <span aria-hidden="true">●</span> {business.status}
+                </span>
 
                 <p className="business-description">{business.description}</p>
 
                 <div className="business-meta">
                   <span>
-                    <MapPinned size={14} aria-hidden="true" />
+                    <MapPinned size={16} aria-hidden="true" />
                     {business.blockLot}
                   </span>
                   <span>{business.hours}</span>
@@ -113,9 +124,10 @@ export default function BusinessesPage() {
 
                 <div className="business-actions">
                   <Link href="/directory" className="secondary-button">
-                    <Store size={15} aria-hidden="true" />
+                    <Store size={16} aria-hidden="true" />
                     View household
                   </Link>
+
                   <button
                     className="primary-button"
                     onClick={() =>
@@ -125,7 +137,7 @@ export default function BusinessesPage() {
                     }
                   >
                     Contact business
-                    <ArrowUpRight size={15} aria-hidden="true" />
+                    <ArrowUpRight size={16} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -155,15 +167,40 @@ export default function BusinessesPage() {
       </div>
 
       <style jsx>{`
-        .business-list-art-full {
-          position: relative;
-          overflow: hidden;
+        .business-list-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 16px;
+        }
+
+        /* Horizontal card: image on the left, all details on the right. */
+        .business-list-card {
+          display: grid;
+          grid-template-columns: minmax(180px, 34%) minmax(0, 1fr);
+          align-items: stretch;
           min-width: 0;
+          overflow: hidden;
+          border: 1px solid #e1e9df;
+          border-radius: 22px;
+          background: #fff;
+          box-shadow: 0 5px 18px rgba(30, 55, 39, 0.035);
+        }
+
+        .business-list-art {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+          min-height: 220px;
+          overflow: hidden;
+          aspect-ratio: 4 / 3;
           background: linear-gradient(135deg, #f3e9d9, #dce9da);
         }
 
-        .business-list-art-full > span {
-          font-size: clamp(64px, 12vw, 112px);
+        .business-illustration {
+          display: block;
+          font-size: clamp(64px, 9vw, 112px);
           line-height: 1;
           filter: drop-shadow(0 8px 10px rgba(32, 49, 40, 0.12));
         }
@@ -175,12 +212,31 @@ export default function BusinessesPage() {
           display: inline-flex;
           align-items: center;
           gap: 6px;
+          max-width: calc(100% - 24px);
           border: 1px solid rgba(255, 255, 255, 0.72);
           border-radius: 999px;
-          padding: 6px 10px;
-          background: rgba(255, 255, 255, 0.9);
+          padding: 7px 11px;
+          background: rgba(255, 255, 255, 0.92);
           color: #536258;
-          font-size: 11px;
+          font-size: 12px;
+        }
+
+        .business-list-body {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          min-width: 0;
+          padding: 22px 24px;
+        }
+
+        .business-name {
+          margin: 0 0 9px;
+          color: #203128;
+          font-size: clamp(18px, 2vw, 24px);
+          font-weight: 700;
+          line-height: 1.25;
+          overflow-wrap: break-word;
         }
 
         .business-category-pill {
@@ -189,77 +245,189 @@ export default function BusinessesPage() {
           max-width: 100%;
           margin: 0 0 10px;
           border-radius: 999px;
-          padding: 6px 10px;
+          padding: 7px 12px;
           background: #edf4ec;
           color: #47694f;
-          font-size: 12px;
+          font-size: 13px;
           font-weight: 650;
           line-height: 1.3;
-          overflow-wrap: anywhere;
+          overflow-wrap: break-word;
+        }
+
+        .business-status {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          margin-bottom: 8px;
+          font-size: 14px;
+          font-weight: 650;
+          line-height: 1.35;
+        }
+
+        .status-open {
+          color: #348553;
+        }
+
+        .status-variable {
+          color: #a17b22;
         }
 
         .business-description {
-          margin-top: 0;
-        }
-
-        .business-title-row {
-          align-items: flex-start;
-          gap: 12px;
-        }
-
-        .business-title-row h2 {
-          min-width: 0;
+          margin: 0 0 12px;
+          color: #69786d;
+          font-size: 14px;
+          line-height: 1.55;
           overflow-wrap: break-word;
         }
 
         .business-meta {
+          display: flex;
           flex-wrap: wrap;
+          align-items: center;
+          gap: 8px 18px;
+          width: 100%;
+          color: #879288;
+          font-size: 13px;
+          line-height: 1.5;
+        }
+
+        .business-meta > span {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          min-width: 0;
+        }
+
+        .business-actions {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 9px;
+          width: 100%;
+          margin-top: 16px;
+        }
+
+        .business-actions > * {
+          min-width: 0;
+        }
+
+        .business-actions :global(.primary-button),
+        .business-actions :global(.secondary-button) {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 44px;
+          padding: 10px 14px;
+          font-size: 13px;
+          white-space: normal;
+        }
+
+        @media (min-width: 1100px) {
+          .business-list-card {
+            grid-template-columns: minmax(240px, 32%) minmax(0, 1fr);
+          }
+
+          .business-list-art {
+            min-height: 240px;
+          }
         }
 
         @media (max-width: 640px) {
-          .business-list-grid {
-            grid-template-columns: minmax(0, 1fr);
-          }
-
           .business-list-card {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
+            grid-template-columns: minmax(112px, 36%) minmax(0, 1fr);
+            border-radius: 18px;
           }
 
-          .business-list-art-full {
-            width: 100%;
-            min-height: 220px;
-            aspect-ratio: 4 / 3;
-            height: auto;
-            border-radius: 16px 16px 0 0;
+          .business-list-art {
+            min-height: 190px;
+            height: 100%;
+            aspect-ratio: auto;
+            border-radius: 0;
           }
 
-          .business-list-art-full > span {
-            font-size: clamp(76px, 22vw, 124px);
+          .business-illustration {
+            font-size: clamp(48px, 13vw, 76px);
+          }
+
+          .business-image-hint {
+            left: 7px;
+            right: 7px;
+            bottom: 8px;
+            justify-content: center;
+            gap: 4px;
+            padding: 6px 5px;
+            font-size: 10px;
           }
 
           .business-list-body {
-            min-width: 0;
-            padding: 16px;
+            padding: 15px 12px;
           }
 
-          .business-title-row {
-            display: flex;
+          .business-name {
+            font-size: 17px;
+            margin-bottom: 8px;
+          }
+
+          .business-category-pill {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            font-size: 11px;
+          }
+
+          .business-status {
+            margin-bottom: 7px;
+            font-size: 12px;
+          }
+
+          .business-description {
+            margin-bottom: 9px;
+            font-size: 12px;
+            line-height: 1.45;
+          }
+
+          .business-meta {
             flex-direction: column;
             align-items: flex-start;
-            gap: 8px;
+            gap: 5px;
+            font-size: 11px;
           }
 
           .business-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 7px;
+            margin-top: 12px;
           }
 
           .business-actions > * {
-            flex: 1 1 145px;
-            justify-content: center;
+            width: 100%;
+          }
+
+          .business-actions :global(.primary-button),
+          .business-actions :global(.secondary-button) {
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 9px;
+            font-size: 11px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .business-list-card {
+            grid-template-columns: minmax(100px, 34%) minmax(0, 1fr);
+          }
+
+          .business-list-body {
+            padding: 12px 9px;
+          }
+
+          .business-name {
+            font-size: 15px;
+          }
+
+          .business-description {
+            font-size: 11px;
           }
         }
       `}</style>
