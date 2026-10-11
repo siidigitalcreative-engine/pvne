@@ -1340,3 +1340,58 @@ img,svg,video,canvas{max-width:100%;height:auto}
 .community-post-meta .post-time-meta i {
   display: none !important;
 }
+
+/* PVNE authentication and role-management screens */
+.header-auth-links{display:flex;align-items:center;gap:7px;margin-left:5px}
+.header-auth-links a{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:35px;padding:0 12px;border-radius:9px;font-size:11px;font-weight:750;text-decoration:none;white-space:nowrap}
+.header-login{color:var(--green,#294d37);border:1px solid var(--line,#e0e8df);background:#fff}
+.header-login:hover{background:#f3f7f1}
+.header-signup{background:var(--green,#294d37);color:#fff}
+.header-signup:hover{background:var(--green-2,#3d6a4b)}
+.auth-page{min-height:calc(100vh - 130px);display:grid;place-items:center;padding:44px 18px;background:linear-gradient(145deg,#f4f7f1 0%,#fbfcfa 55%,#edf4ec 100%)}
+.auth-card{width:min(100%,440px);padding:32px;background:#fff;border:1px solid #e0e8df;border-radius:22px;box-shadow:0 18px 55px rgba(32,58,37,.08)}
+.auth-back-link{display:inline-flex;align-items:center;gap:6px;color:#59705d;text-decoration:none;font-size:12px;font-weight:700}
+.auth-back-link:hover{color:#294d37}
+.auth-brand-mark{display:grid;place-items:center;width:52px;height:52px;margin:27px 0 18px;background:#edf4ec;border-radius:16px;font-size:27px}
+.auth-eyebrow{margin:0 0 9px;color:#6c866e;font-size:10px;font-weight:800;letter-spacing:.15em}
+.auth-card h1,.admin-members-heading h1{margin:0;color:#203628;font-size:clamp(28px,5vw,35px);line-height:1.15;letter-spacing:-.04em}
+.auth-description{margin:11px 0 24px;color:#718074;font-size:13px;line-height:1.65}
+.auth-form{display:grid;gap:15px}
+.auth-form label{display:grid;gap:7px;color:#33483a;font-size:12px;font-weight:750}
+.auth-form input{width:100%;min-height:45px;padding:11px 13px;border:1px solid #dce5dc;border-radius:10px;background:#fff;color:#203628;font:inherit;font-size:13px;outline:none}
+.auth-form input:focus{border-color:#6f9a73;box-shadow:0 0 0 3px rgba(111,154,115,.13)}
+.auth-form input::placeholder{color:#a0aaa0;font-weight:400}
+.auth-helper{margin:-5px 0 0;color:#7a887c;font-size:11px;line-height:1.55}
+.auth-error{margin:0;padding:11px 12px;border:1px solid #f0c8c3;border-radius:9px;background:#fff4f2;color:#a3372e;font-size:12px;line-height:1.5}
+.auth-submit{min-height:46px;margin-top:3px;border:0;border-radius:10px;background:#294d37;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.auth-submit:hover{background:#3d6a4b}
+.auth-submit:disabled{opacity:.65;cursor:wait}
+.auth-switch{margin:21px 0 0;text-align:center;color:#748075;font-size:12px}
+.auth-switch a{color:#315f3d;font-weight:800;text-decoration:none}
+.admin-members-page{width:min(100% - 36px,1040px);min-height:70vh;margin:0 auto;padding:32px 0 65px}
+.admin-members-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.admin-logout,.admin-status-button{min-height:34px;padding:0 11px;border:1px solid #dce5dc;border-radius:8px;background:#fff;color:#35553c;font-size:11px;font-weight:750;cursor:pointer}
+.admin-logout:hover,.admin-status-button:hover{background:#f0f6ee}
+.admin-members-heading{margin:35px 0 22px}
+.admin-members-heading>p:last-child{margin:10px 0 0;color:#738074;font-size:13px;line-height:1.6}
+.admin-members-note{display:grid;gap:4px;margin-bottom:17px;padding:15px 17px;border:1px solid #dfe9dc;border-radius:12px;background:#f4f8f2;color:#506a54;font-size:12px;line-height:1.6}
+.admin-members-note strong{color:#2d4e35;font-size:12px}
+.admin-members-list{display:grid;gap:10px}
+.admin-member-row{display:flex;align-items:center;gap:13px;padding:15px;border:1px solid #e2e9e1;border-radius:13px;background:#fff}
+.admin-member-avatar{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:50%;background:#edf4ec;color:#315c3a;font-size:16px;font-weight:800}
+.admin-member-info{display:grid;gap:4px;min-width:0;flex:1}
+.admin-member-info strong{color:#263c2b;font-size:13px;overflow-wrap:anywhere}
+.admin-member-info span,.admin-member-info small{color:#788579;font-size:11px;overflow-wrap:anywhere}
+.admin-member-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.admin-member-actions select{min-height:34px;padding:0 8px;border:1px solid #dce5dc;border-radius:8px;background:#fff;color:#35553c;font-size:11px}
+.admin-member-actions button:disabled,.admin-member-actions select:disabled{opacity:.6;cursor:wait}
+.role-pill,.member-status{display:inline-flex;align-items:center;min-height:23px;padding:0 8px;border-radius:999px;font-size:10px;font-weight:800}
+.role-admin{background:#e9f0ff;color:#3456a0}
+.role-member{background:#edf4ec;color:#45674a}
+.member-status.active{color:#397346;background:#edf7ed}
+.member-status.disabled{color:#9c3f35;background:#fff0ee}
+.admin-loading{padding:24px;color:#718074;font-size:13px}
+@media(max-width:1000px){.header-auth-links{gap:5px}.header-auth-links a{min-height:32px;padding:0 9px;font-size:10px}.header-auth-links .header-login svg{display:none}}
+@media(max-width:820px){.header-auth-links{margin-left:0}.header-auth-links a{padding:0 8px}.header-actions{gap:7px}}
+@media(max-width:620px){.auth-page{min-height:calc(100vh - 90px);padding:25px 14px}.auth-card{padding:25px 21px;border-radius:18px}.admin-members-page{width:calc(100% - 28px);padding-top:22px}.admin-member-row{align-items:flex-start;flex-wrap:wrap;padding:13px;gap:10px}.admin-member-info{flex-basis:calc(100% - 55px)}.admin-member-actions{width:100%;justify-content:flex-start;padding-left:52px}.admin-member-actions select{flex:1;min-width:95px}}
+@media(max-width:480px){.header-actions>.icon-button{display:none}.header-auth-links a{min-height:30px;padding:0 7px}.header-auth-links .header-login{border:0;background:transparent}.header-auth-links .header-signup{border-radius:7px}}
