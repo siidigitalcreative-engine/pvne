@@ -89,7 +89,21 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
               <label>
                 Relationship to property owner
-                <select value={ownerRelationship} onChange={(event) => setOwnerRelationship(event.target.value)} required>
+                <select
+                  value={ownerRelationship}
+                  onChange={(event) => setOwnerRelationship(event.target.value)}
+                  required
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    minHeight: 48,
+                    height: 48,
+                    boxSizing: "border-box",
+                    padding: "12px 14px",
+                    fontSize: 15,
+                    lineHeight: 1.4,
+                  }}
+                >
                   <option value="">Select relationship</option>
                   {relationshipOptions.map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
