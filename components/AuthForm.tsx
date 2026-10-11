@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 type AuthFormProps = { mode: "login" | "signup" };
 
 const relationshipOptions = [
-  { value: "owner", label: "Homeowner" },
+  { value: "owner", label: "Homeowner (HO)" },
   { value: "co_owner", label: "Co-owner" },
   { value: "spouse", label: "Spouse of Homeowner" },
   { value: "domestic_partner", label: "Domestic Partner of Homeowner" },
@@ -24,14 +24,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [blockNumber, setBlockNumber] = useState("");
   const [lotNumber, setLotNumber] = useState("");
+  const [streetName, setStreetName] = useState("");
   const [ownerRelationship, setOwnerRelationship] = useState("");
   const [ownerRelationshipOther, setOwnerRelationshipOther] = useState("");
-  const [colorScheme, setColorScheme] = useState<"Turquoise" | "Aubergine" | "Santan">("Turquoise");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,11 +36,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
     event.preventDefault();
     setBusy(true);
     setError("");
-    if (isSignup && password !== confirmPassword) {
-      setError("Passwords do not match. Please check both password fields.");
-      setBusy(false);
-      return;
-    }
     try {
       const response = await fetch(`/api/auth/${mode}`, {
         method: "POST",
@@ -52,7 +44,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           name,
           email,
           password,
-          ...(isSignup ? { blockNumber, lotNumber, ownerRelationship, ownerRelationshipOther, colorScheme } : {}),
+          ...(isSignup ? { blockNumber, lotNumber, streetName, ownerRelationship, ownerRelationshipOther } : {}),
         }),
       });
       const result = await response.json();
@@ -97,41 +89,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
               </div>
 
               <label>
-                House color
-                <select
-                  value={colorScheme}
-                  onChange={(event) => setColorScheme(event.target.value as "Turquoise" | "Aubergine" | "Santan")}
-                  required
-                  style={{ display: "block", width: "100%", minHeight: 48, height: 48, boxSizing: "border-box", padding: "12px 14px", fontSize: 14, fontWeight: 400, lineHeight: 1.4 }}
-                >
-                  <option value="Turquoise">Turquoise</option>
-                  <option value="Aubergine">Aubergine</option>
-                  <option value="Santan">Santan</option>
-                </select>
-                <small style={{ display: "flex", alignItems: "center", gap: 8, color: "#64766a", fontWeight: 400 }}>
-                  <span style={{ width: 14, height: 14, borderRadius: 4, background: colorScheme === "Turquoise" ? "#9bd9df" : colorScheme === "Aubergine" ? "#9a91b8" : "#a9d69e", border: "1px solid #dce5dc" }} />
-                  This color will be used for your house in the village directory and map.
-                </small>
+                Street name
+                <input value={streetName} onChange={(event) => setStreetName(event.target.value)} maxLength={100} placeholder="e.g. Sampaguita Street" autoComplete="street-address" />
               </label>
 
               <label>
-                Relationship to homeowner
-                <select
-                  value={ownerRelationship}
-                  onChange={(event) => setOwnerRelationship(event.target.value)}
-                  required
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    minHeight: 48,
-                    height: 48,
-                    boxSizing: "border-box",
-                    padding: "12px 14px",
-                    fontSize: 14,
-                    fontWeight: 400,
-                    lineHeight: 1.4,
-                  }}
-                >
+                Relationship to Homeowner
+                <select value={ownerRelationship} onChange={(event) => setOwnerRelationship(event.target.value)} required>
                   <option value="">Select relationship</option>
                   {relationshipOptions.map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
@@ -154,61 +118,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </label>
           <label>
             Password
-            <span className="auth-password-control" style={{ display: "flex", alignItems: "center", position: "relative", width: "100%" }}>
-              <input
-                type={showPassword ? "text" : "password"}
-                autoComplete={isSignup ? "new-password" : "current-password"}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                minLength={isSignup ? 10 : 1}
-                maxLength={128}
-                required
-                placeholder={isSignup ? "At least 10 characters" : "Enter your password"}
-                style={{ width: "100%", paddingRight: 64, boxSizing: "border-box" }}
-              />
-              <button
-                className="auth-password-toggle"
-                style={{ position: "absolute", right: 12, border: 0, background: "transparent", padding: "6px 4px", color: "#28553b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
-                type="button"
-                onClick={() => setShowPassword((visible) => !visible)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
-            </span>
+            <input type="password" autoComplete={isSignup ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} minLength={isSignup ? 10 : 1} maxLength={128} required placeholder={isSignup ? "At least 10 characters" : "Enter your password"} />
           </label>
-
-          {isSignup && (
-            <label>
-              Confirm password
-              <span className="auth-password-control" style={{ display: "flex", alignItems: "center", position: "relative", width: "100%" }}>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  minLength={10}
-                  maxLength={128}
-                  required
-                  placeholder="Re-enter your password"
-                  aria-invalid={confirmPassword.length > 0 && password !== confirmPassword}
-                  style={{ width: "100%", paddingRight: 64, boxSizing: "border-box" }}
-                />
-                <button
-                  className="auth-password-toggle"
-                  style={{ position: "absolute", right: 12, border: 0, background: "transparent", padding: "6px 4px", color: "#28553b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
-                  type="button"
-                  onClick={() => setShowConfirmPassword((visible) => !visible)}
-                  aria-label={showConfirmPassword ? "Hide confirmation password" : "Show confirmation password"}
-                >
-                  {showConfirmPassword ? "Hide" : "Show"}
-                </button>
-              </span>
-              {confirmPassword.length > 0 && password !== confirmPassword && (
-                <small className="auth-password-mismatch">Passwords do not match.</small>
-              )}
-            </label>
-          )}
 
           {isSignup && <p className="auth-helper">New accounts start as Members. An Admin can update your role later.</p>}
           {error && <p className="auth-error" role="alert">{error}</p>}
