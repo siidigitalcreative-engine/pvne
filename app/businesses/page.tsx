@@ -8,7 +8,6 @@ import {
   MapPinned,
   ArrowUpRight,
   Filter,
-  Image as ImageIcon,
 } from "lucide-react";
 import { SiteShell } from "@/components/SiteShell";
 import { seedBusinesses } from "@/lib/data";
@@ -89,10 +88,6 @@ export default function BusinessesPage() {
                 <span className="business-illustration" aria-hidden="true">
                   {business.emoji}
                 </span>
-                <div className="business-image-hint">
-                  <ImageIcon size={16} aria-hidden="true" />
-                  <span>Business image</span>
-                </div>
               </div>
 
               <div className="business-list-body">
@@ -205,21 +200,6 @@ export default function BusinessesPage() {
           filter: drop-shadow(0 8px 10px rgba(32, 49, 40, 0.12));
         }
 
-        .business-image-hint {
-          position: absolute;
-          left: 12px;
-          bottom: 12px;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          max-width: calc(100% - 24px);
-          border: 1px solid rgba(255, 255, 255, 0.72);
-          border-radius: 999px;
-          padding: 7px 11px;
-          background: rgba(255, 255, 255, 0.92);
-          color: #536258;
-          font-size: 12px;
-        }
 
         .business-list-body {
           display: flex;
@@ -350,15 +330,6 @@ export default function BusinessesPage() {
             font-size: clamp(48px, 13vw, 76px);
           }
 
-          .business-image-hint {
-            left: 7px;
-            right: 7px;
-            bottom: 8px;
-            justify-content: center;
-            gap: 4px;
-            padding: 6px 5px;
-            font-size: 10px;
-          }
 
           .business-list-body {
             padding: 15px 12px;
